@@ -40,7 +40,7 @@ export class LoggerService implements ILoggerService {
     }
 
     // general centralized log where is possible to add 
-    public log(level: LogLevel, message: string, args?: any): void {
+    public log(level: LogLevel, message: string, args?: any[]): void {
         this.logger.log(level, message);
 
         // additional code for @args & debug levels
