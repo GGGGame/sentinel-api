@@ -25,7 +25,7 @@ export const errorHandler = (
         context: ${message} \t
         path: ${req.path}   \t
         method: ${req.method} \t
-        error: ${err}        \t   
+        error: ${err}   
     `);
 
     res.status(statusCode).json({
