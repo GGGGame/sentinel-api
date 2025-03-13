@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "skipLibCheck": true,
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "./node_modules", 
+    "./dist", 
+    "./scripts", 
+    "./drizzle"
+  ]
+}
