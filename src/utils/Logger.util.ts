@@ -1,7 +1,7 @@
 import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 import { ILoggerService } from "../Interfaces/logger/LoggerService";
-import { LogLevel } from "../enums/LogLevelEnum";
+import { LogLevel } from "../enums/LogLevel.enum";
 
 export class LoggerService implements ILoggerService {
     private static instance: LoggerService;

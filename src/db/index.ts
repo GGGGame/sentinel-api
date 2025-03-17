@@ -1,7 +1,7 @@
-import { users } from "./schema/users";
-import { apiKeys } from "./schema/apiKeys";
-import { logs } from "./schema/logs";
-import { rateLimitRules } from "./schema/rateLimitRules";
+import { users } from "./schema/users.schema";
+import { apiKeys } from "./schema/apiKeys.schema";
+import { logs } from "./schema/logs.schema";
+import { rateLimitRules } from "./schema/rateLimitRules.schema";
 
 export {
     users,

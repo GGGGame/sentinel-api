@@ -2,9 +2,9 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { env } from "../config/environment";
 import * as schema from "./index"
-import { LoggerService } from "../utils/logger";
+import { LoggerService } from "../utils/Logger.util";
 
-export class DatabaseService {
+class DatabaseService {
     private pool: Pool;
     public db: ReturnType<typeof drizzle>;
     private logger = LoggerService.getInstance();
@@ -32,3 +32,5 @@ export class DatabaseService {
         await this.pool.end();
     }
 }
+
+export const databaseService = new DatabaseService();

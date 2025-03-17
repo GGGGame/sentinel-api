@@ -1,8 +1,8 @@
 import Redis from "ioredis";
-import { LoggerService } from "../src/utils/logger";
+import { LoggerService } from "../src/utils/Logger.util";
 import { env } from "../src/config/environment";
 
-export class RedisService {
+class RedisService {
     private client: Redis;
     private logger = LoggerService.getInstance();
 
@@ -45,3 +45,5 @@ export class RedisService {
         await this.client.quit();
     }
 }
+
+export const redisService = new RedisService();
