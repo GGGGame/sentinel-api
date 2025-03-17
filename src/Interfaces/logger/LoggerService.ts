@@ -1,4 +1,4 @@
-import { LogLevel } from "../../enums/LogLevelEnum";
+import { LogLevel } from "../../enums/LogLevel.enum";
 
 export interface ILoggerService {
     log(level: LogLevel, message: string, args?: any[]): void;
