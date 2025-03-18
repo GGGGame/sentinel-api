@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/Error/ApiError";
-import { jwtService } from "./jwtService";
+import { jwtService } from "./jwt.service";
 
 declare global {
     namespace Express {
