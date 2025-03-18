@@ -11,7 +11,9 @@ export {
 }
 
 export type User = typeof users.$inferSelect;
+export type UserEmail = Pick<typeof users.$inferSelect, "email">;
 export type InsertUser = typeof users.$inferInsert;
+export type UpdateUser = Omit<typeof users.$inferSelect, "id" | "createdAt" | "lastOnline">;
 
 export type ApiKey = typeof apiKeys.$inferSelect;
 export type InsertApiKey = typeof apiKeys.$inferInsert;
