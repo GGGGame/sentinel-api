@@ -1,4 +1,5 @@
 export const usersSchema = {
+    $$strict: true,
     name: {
         type: "string",
         min: 1,

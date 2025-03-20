@@ -1,23 +1,44 @@
 import { NextFunction, Request, Response } from "express";
 import { userService } from "../services/userService";
 import { LoggerService } from "../utils/Logger.util";
+import { ApiError } from "../utils/Error/ApiError";
+import { passwords } from "../auth/passwords";
+import { jwtService } from "../auth/jwt.service";
 
 class UserControllers {
-    private logger = LoggerService.getInstance();
-
     constructor () {
         this.getUserById = this.getUserById.bind(this);
         this.createUser = this.createUser.bind(this);
     }
+
+    async login(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { email, password } = req.body;
+        try {
+            const user = await userService.getUserByEmail(email);
+            if (!user ) {
+                throw new ApiError(404, `Email: ${email} not found`);
+            }
+
+            const passwordMatch = await passwords.comparePassword(password, user.password);
+
+            if (!passwordMatch) {
+                throw new ApiError(400, 'The password is wrong, Try again.');
+            }
+
+            const token = jwtService.generateToken(user);
+            
+            res.json({ token });
+        } catch (error) {
+            next(new ApiError(400, error.message));
+        }
+    }
     
     async getUserById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { id } = req.params;
-            const user = await userService.getUserById(+id);
+            const user = await userService.getUserById(req.user?.id);
             res.json(user);
         } catch (error) {
-            this.logger.error(`Unexpected error by recovering the user ${error.message}`);
-            next(error);
+            next(new ApiError(400, error.message));
         }
     }
 
@@ -27,31 +48,26 @@ class UserControllers {
             const newUser = await userService.createUser(data);
             res.status(200).json(newUser);
         } catch (error) {
-            this.logger.error(`Unexpected error by creating the user`);
-            next(error);
+            next(new ApiError(400, error.message));
         }
     }
 
     async updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { id } = req.params;
             const data = req.body;
-            const updatedUser = await userService.updateUser(+id, data);
+            const updatedUser = await userService.updateUser(req.user?.id, data);
             res.status(200).json(updatedUser);
         } catch (error) {
-            this.logger.error(`Unexpected error by updating the user`);
-            next(error);
+            next(new ApiError(400, error.message));
         }
     }
 
     async deleteUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { id } = req.params;
-            const deletedUser = await userService.deleteUser(+id);
+            const deletedUser = await userService.deleteUser(req.user?.id);
             res.status(200).json(deletedUser);
         } catch (error) {
-            this.logger.error(`Unexpected error by deleting the user`);
-            next(error);
+            next(new ApiError(400, error.message));
         }
     }
 }
