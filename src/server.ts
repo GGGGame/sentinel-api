@@ -1,11 +1,11 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import { env } from "./config/environment";
 import { errorHandler } from "./utils/Error/Error.handler";
-import { userRoutes } from './routes/userRoutes';
 import { LoggerService } from "./utils/Logger.util";
 import { ApiError } from "./utils/Error/ApiError";
+import { initRoutes } from "./routes/main";
 
 const logger = LoggerService.getInstance();
 const app = express();
@@ -20,8 +20,9 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-app.use('/api', userRoutes);
-app.use((req, res, next) => {
+initRoutes(app);
+
+app.use((req: Request, res: Response, next: NextFunction) => {
     throw new ApiError(404, `Route not found`);
 });
 

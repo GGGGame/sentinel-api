@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 import { InsertUser, User, UserEmail, users } from "../db";
 import { databaseService } from "../db/Database.service"
 import { MainDataService } from "../validator/main.data.service";
@@ -18,9 +18,17 @@ class UserQuery {
         return user;
     }
 
-    async findByEmail(email: string): Promise<UserEmail> {
-        const [user] = await this.db.select().from(users).where(eq(users.email, email));
-        return user;
+    async findByEmail(email: string, onlyEmail: boolean = false): Promise<User | UserEmail> {
+        const [user] = await this.db
+                        .select({
+                            ...(onlyEmail 
+                                ? { email: users.email } 
+                                : getTableColumns(users))
+                        })
+                        .from(users)
+                        .where(eq(users.email, email));
+                        
+        return onlyEmail ? user as UserEmail : user as User;
     }
 
     async createUser(userData: InsertUser): Promise<QueryResult> {

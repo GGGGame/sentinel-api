@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/Error/ApiError";
 import { jwtService } from "./jwt.service";
+import { User } from "../db";
 
 declare global {
     namespace Express {
         interface Request {
-            user?: any;
+            user?: User;
         }
     }
 }

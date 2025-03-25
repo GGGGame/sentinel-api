@@ -1,5 +1,5 @@
 import { QueryResult } from "pg";
-import { InsertUser, UpdateUser, User } from "../db";
+import { InsertUser, UpdateUser, User, UserEmail } from "../db";
 import { userQuery } from "../query/User.query"
 import { ApiError } from "../utils/Error/ApiError";
 import { passwords } from "../auth/passwords";
@@ -20,13 +20,22 @@ class userServices {
         return user;
     }
 
+    async getUserByEmail(email: string): Promise<User> {
+        const user = await userQuery.findByEmail(email);
+        if (!user) {
+            throw new ApiError(404, `Email: ${email} not found`);
+        }
+
+        return user as User;
+    }
+
     async createUser(userData: InsertUser): Promise<QueryResult> {
-        const user = await userQuery.findByEmail(userData.email);
+        const user = await userQuery.findByEmail(userData.email, true);
         if (user) {
             throw new ApiError(400, 'Email already exist');
         }
 
-        passwords.hashPassword(userData.password);
+        userData.password = await passwords.hashPassword(userData.password);
 
         const newUser = await userQuery.createUser(userData);
         return newUser;
@@ -38,7 +47,6 @@ class userServices {
         }
 
         userData.password = await passwords.hashPassword(userData.password);
-        userData.updatedAt = new Date();
 
         const updatedUser = await userQuery.updateUser(id, userData);
         return updatedUser;

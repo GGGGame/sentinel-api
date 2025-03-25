@@ -7,5 +7,5 @@ export const rateLimitRules = pgTable('rate_limit_rules', {
     limit: integer('limit').notNull(),
     window: integer('window').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at').defaultNow().notNull()
+    updatedAt: timestamp('updated_at').defaultNow().notNull().$onUpdate(() => new Date())
   });

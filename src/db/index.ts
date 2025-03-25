@@ -17,6 +17,7 @@ export type UpdateUser = Omit<typeof users.$inferSelect, "id" | "createdAt" | "l
 
 export type ApiKey = typeof apiKeys.$inferSelect;
 export type InsertApiKey = typeof apiKeys.$inferInsert;
+export type UpdateApiKey = Pick<typeof apiKeys.$inferSelect, "name" | "isActive" | "lastUsedAt">;
 
 export type LogEntry = typeof logs.$inferSelect;
 export type InsertLogEntry = typeof logs.$inferInsert;
