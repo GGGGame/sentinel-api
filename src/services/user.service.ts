@@ -47,7 +47,6 @@ class userServices {
         }
 
         userData.password = await passwords.hashPassword(userData.password);
-        userData.updatedAt = new Date();
 
         const updatedUser = await userQuery.updateUser(id, userData);
         return updatedUser;

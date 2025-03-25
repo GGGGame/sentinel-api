@@ -7,8 +7,8 @@ export const apiKeysSchema = {
         nullable: false,
         messages: {
             string: "Please check your key",
-            stringMin: "Your key is too short!",
-            stringMax: "Your key is too long!"
+            stringMin: "Required 64 char min",
+            stringMax: "Required 64 char max"
         }
     },
     name: {
@@ -22,26 +22,11 @@ export const apiKeysSchema = {
             stringMax: "Your name is too long!",
         }
     },
-    user_id: {
+    userId: {
         type: "number",
         nullable: false,
         messages: {
-            number: "Please check your user_id"
-        }
-    },
-    is_active: {
-        type: "boolean",
-        optional: true,
-        nullable: false,
-        messages: {
-            boolean: "Please check is_active"
-        }
-    },
-    last_used_at: {
-        type: "date",
-        optional: true,
-        messages: {
-            date: "Please check last_used_at"
+            number: "Please check your userId"
         }
     }
 }

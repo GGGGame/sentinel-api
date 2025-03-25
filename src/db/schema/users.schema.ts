@@ -6,6 +6,6 @@ export const users = pgTable('users', {
     password: text('password').notNull(),
     email: varchar('email', { length: 255}).unique().notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull().$onUpdate(() => new Date()),
     lastOnline: timestamp('last_online').defaultNow().notNull(),
 });

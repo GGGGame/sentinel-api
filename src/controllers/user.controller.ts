@@ -1,15 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { userService } from "../services/userService";
-import { LoggerService } from "../utils/Logger.util";
+import { userService } from "../services/user.service";
 import { ApiError } from "../utils/Error/ApiError";
 import { passwords } from "../auth/passwords";
 import { jwtService } from "../auth/jwt.service";
 
 class UserControllers {
-    constructor () {
-        this.getUserById = this.getUserById.bind(this);
-        this.createUser = this.createUser.bind(this);
-    }
 
     async login(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { email, password } = req.body;

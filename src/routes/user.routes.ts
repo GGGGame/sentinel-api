@@ -1,6 +1,6 @@
 import express from 'express';
-import { userController } from '../controllers/user.controllers';
 import { authenticate } from '../auth/authentication';
+import { userController } from '../controllers/user.controller';
 
 export const userRoutes = express.Router();
 
