@@ -6,6 +6,8 @@ import { errorHandler } from "./utils/Error/Error.handler";
 import { LoggerService } from "./utils/Logger.util";
 import { ApiError } from "./utils/Error/ApiError";
 import { initRoutes } from "./routes/main";
+import { redisService } from "./redis/redis.service";
+import { RedisError } from "./utils/Error/RedisError";
 
 const logger = LoggerService.getInstance();
 const app = express();
@@ -22,8 +24,13 @@ app.use(limiter);
 
 initRoutes(app);
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-    throw new ApiError(404, `Route not found`);
+app.use(async (req: Request, res: Response, next: NextFunction) => {
+    if (!await redisService.healthCheck()) {
+        res.status(500).json({ message: `Redis is not available` });
+        next(new RedisError(500, `Redis is not available`));
+    }
+    res.status(500).json({ message: `Route not found` });
+    next(new ApiError(404, `Route not found`));
 });
 
 app.use(errorHandler);
@@ -33,6 +40,14 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 const PORT: number = env.PORT;
-app.listen(PORT, () => {
-    logger.info(`Server running on port ${PORT}`);
-});
+const server = app.listen(PORT, () => {
+        logger.info(`Server running on port ${PORT}`);
+    });
+
+process.on('SIGTERM', async () => {
+    console.debug('SIGTERM signal received: closing HTTP server');
+    await redisService.close();
+    server.close(() => {
+      console.debug('HTTP server closed')
+    })
+  })

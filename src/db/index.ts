@@ -23,4 +23,5 @@ export type LogEntry = typeof logs.$inferSelect;
 export type InsertLogEntry = typeof logs.$inferInsert;
 
 export type RateLimitRule = typeof rateLimitRules.$inferSelect;
+export type getLimit = Pick<typeof rateLimitRules.$inferSelect, "limit">;
 export type InsertRateLimitRule = typeof rateLimitRules.$inferInsert;

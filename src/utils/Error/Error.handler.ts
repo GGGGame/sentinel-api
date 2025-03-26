@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiError } from "./ApiError";
 import { LoggerService } from "../Logger.util";
+import { RedisError } from "./RedisError";
 
 export const errorHandler = (
-    err: Error | ApiError,
+    err: Error | ApiError | RedisError,
     req: Request,
     res: Response,
     next: NextFunction
