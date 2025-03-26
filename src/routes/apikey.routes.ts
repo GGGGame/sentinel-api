@@ -1,13 +1,17 @@
 import express from 'express';
 import { authenticate } from '../auth/authentication';
 import { apiKeyController } from '../controllers/apikey.controller';
+import { rateLimiter } from '../middleware/rateLimiter';
 
 export const apiKeyRoutes = express.Router();
 
-apiKeyRoutes.get('/keys', authenticate, apiKeyController.getApiKeysByUser);
+apiKeyRoutes.use(authenticate);
+apiKeyRoutes.use(rateLimiter);
 
-apiKeyRoutes.post('/keys', authenticate, apiKeyController.createApiKey);
+apiKeyRoutes.get('/', apiKeyController.getApiKeysByUser);
 
-apiKeyRoutes.put('/keys/:id', authenticate, apiKeyController.updateApiKey);
+apiKeyRoutes.post('/', apiKeyController.createApiKey);
 
-apiKeyRoutes.delete('/keys/:id', authenticate, apiKeyController.deleteApiKey);
+apiKeyRoutes.put('/:id', apiKeyController.updateApiKey);
+
+apiKeyRoutes.delete('/:id', apiKeyController.deleteApiKey);
