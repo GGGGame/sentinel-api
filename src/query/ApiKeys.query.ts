@@ -4,7 +4,6 @@ import { databaseService } from "../db/Database.service";
 import { MainDataService } from "../validator/main.data.service";
 import { apiKeysSchema } from "../validator/models/apiKeys.validator.model";
 import { QueryResult } from "pg";
-import { ApiError } from "../utils/Error/ApiError";
 import { updateApiKeysSchema } from "../validator/models/updateApiKeys.validator.model";
 
 class ApiKeysQuery {
