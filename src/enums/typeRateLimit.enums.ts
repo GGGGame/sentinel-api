@@ -1,6 +1,6 @@
-export enum TypeRateLimit {
-    USER    = "user",
-    IP      = "ip",
-    ENDPOINT= "endpoint",
-    GLOBAL  = "global"
+export enum RATE_LIMIT {
+    user    = "USER",
+    ip      = "IP",
+    endpoint= "ENDPOINT",
+    global  = "GLOBAL"
 }

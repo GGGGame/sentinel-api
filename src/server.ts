@@ -26,10 +26,10 @@ initRoutes(app);
 
 app.use(async (req: Request, res: Response, next: NextFunction) => {
     if (!await redisService.healthCheck()) {
-        res.status(500).json({ message: `Redis is not available` });
-        next(new RedisError(500, `Redis is not available`));
+        res.status(404).json({ message: `Redis is not available` });
+        next(new RedisError(404, `Redis is not available`));
     }
-    res.status(500).json({ message: `Route not found` });
+    res.status(404).json({ message: `Route not found` });
     next(new ApiError(404, `Route not found`));
 });
 
@@ -40,9 +40,10 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 const PORT: number = env.PORT;
-const server = app.listen(PORT, () => {
-        logger.info(`Server running on port ${PORT}`);
-    });
+const server = app.listen(PORT, async () => {
+    await redisService.initializeRules();
+    logger.info(`Server running on port ${PORT}`);
+});
 
 process.on('SIGTERM', async () => {
     console.debug('SIGTERM signal received: closing HTTP server');

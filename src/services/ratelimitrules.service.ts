@@ -1,6 +1,7 @@
-import { getLimit, RateLimitRule } from "../db";
+import { getLimit, InsertRateLimitRule, RateLimitRule } from "../db";
 import { rateLimitRulesQuery } from "../query/RateLimitRules.query";
 import { redisService } from "../redis/redis.service";
+import { RedisError } from "../utils/Error/RedisError";
 
 class RateLimitRules {
 
@@ -14,21 +15,25 @@ class RateLimitRules {
         }
     }
 
-    async checkLimit(key: string, type: string): Promise<{
-        allowed: boolean;
-        remaining: number;
-    }> {
-        const countKey = `rate-limit:${key}:${type}:count`;
+    async checkLimit(key: string | number, type: string): Promise<boolean> {
         const limitKey = `rate-limit:${key}:${type}:limit`;
+        const limit = await redisService.get(limitKey);
 
-        const limit = parseInt(await redisService.get(limitKey)) || 0;
+        if (limit === null) {
+            throw new RedisError(400, `Cannot found Key: ${key} and Type: ${type} in Redis`);
+        }
 
+        const countKey = `rate-limit:${key}:${type}:count`;
         const currentKeyUsage = await redisService.increment(countKey);
 
-        return {
-            allowed: currentKeyUsage <= limit,
-            remaining: Math.max(0, limit - currentKeyUsage)
-        }
+        return currentKeyUsage <= parseInt(limit);
+    }
+
+    async createLimitRule(limitRule: InsertRateLimitRule): Promise<InsertRateLimitRule> {
+        const newRule = await rateLimitRulesQuery.createLimitRule(limitRule);
+        await this.setLimitRules();
+
+        return newRule;
     }
 }
 

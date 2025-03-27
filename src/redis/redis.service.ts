@@ -1,11 +1,12 @@
 import Redis from "ioredis";
 import { env } from "../config/environment";
 import { RedisError } from "../utils/Error/RedisError";
-import fs from 'fs';
-import path from 'path';
-
+import { rateLimitRulesService } from "../services/ratelimitrules.service";
+import { LoggerService } from "../utils/Logger.util";
 class RedisService {
     private client: Redis;
+    private isInitialized: boolean = false;
+    private logger = LoggerService.getInstance();
 
     constructor() {
         this.client = new Redis(env.REDIS_URL)
@@ -13,6 +14,14 @@ class RedisService {
         this.client.on('error', (error) => {
             console.error('Redis error', error);
         });
+    }
+
+    async initializeRules(): Promise<void> {
+        if (this.isInitialized) return;
+
+        await rateLimitRulesService.setLimitRules();
+        this.isInitialized = true;
+        this.logger.info("Rate limit initialized!");
     }
 
     getClient(): Redis {

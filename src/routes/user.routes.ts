@@ -4,11 +4,11 @@ import { userController } from '../controllers/user.controller';
 
 export const userRoutes = express.Router();
 
-userRoutes.get('/users/', authenticate, userController.getUserById);
+userRoutes.get('/', authenticate, userController.getUserById);
 
-userRoutes.post('/users/login', userController.login);
-userRoutes.post('/users', userController.createUser);
+userRoutes.post('/login', userController.login);
+userRoutes.post('', userController.createUser);
 
-userRoutes.put('/users/', authenticate, userController.updateUser);
+userRoutes.put('/', authenticate, userController.updateUser);
 
-userRoutes.delete('/users/', authenticate, userController.deleteUser);
+userRoutes.delete('/', authenticate, userController.deleteUser);
