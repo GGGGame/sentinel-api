@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/Error/ApiError";
 import { rateLimitRulesService } from "../services/ratelimitrules.service";
 import { RedisError } from "../utils/Error/RedisError";
+import { RATE_LIMIT } from "../enums/typeRateLimit.enums";
 
 export const rateLimiter = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -19,8 +20,32 @@ export const rateLimiter = async (req: Request, res: Response, next: NextFunctio
 }
 
 const getKeyAndType = async (req: Request): Promise<{ key: string | number, type: string }> => {
-    if (req.user) return { key: req.user.id, type: "user" };
-    if (req.path) return { key: req.path, type: "path" };
-    if (req.ip) return { key: req.ip, type: "ip" };
-    return { key: 'global', type: "global" };
+    const limitHeader = req.headers['x-limit-rules'] as string;
+
+    if (!limitHeader) {
+        throw new ApiError(401, 'Missing limit-rules header');
+    }
+
+    const headerSplit = limitHeader.split(':');
+    // expected format enum: typeRateLimit.enum.ts
+    if (headerSplit.length !== 1 && headerSplit[0] in RATE_LIMIT) {
+        throw new ApiError(401, `Requested wrong format of limit-rules, required: ${RATE_LIMIT}`);
+    }
+
+    return selectByRule(req, headerSplit[0]);
+}
+
+const selectByRule = async (req: Request, header: string): Promise<{ key: string | number, type: string }> => {
+    switch (header) {
+        case "ip":
+            return { key: req.ip, type: header};
+        case "user":
+            return { key: req.user?.id, type: header};
+        case "path":
+            return { key: req.path, type: header};
+        case "global":
+            return { key: header, type: header};
+        default:
+            throw new ApiError(401, `Invalid header: ${header}`);
+    }
 }
