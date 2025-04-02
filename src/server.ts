@@ -1,6 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
-import rateLimit from "express-rate-limit";
-import helmet from "helmet";
+import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { env } from "./config/environment";
 import { errorHandler } from "./utils/Error/Error.handler";
 import { LoggerService } from "./utils/Logger.util";
@@ -8,47 +6,51 @@ import { ApiError } from "./utils/Error/ApiError";
 import { initRoutes } from "./routes/main";
 import { redisService } from "./redis/redis.service";
 import { RedisError } from "./utils/Error/RedisError";
+import fastifyHelmet from "@fastify/helmet";
 
 const logger = LoggerService.getInstance();
-const app = express();
-
-app.use(express.json());
-app.use(helmet());
-
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    message: "Too many requests, please try again later."
+const app: FastifyInstance = fastify({
+    logger: false,
+    disableRequestLogging: true
 });
-app.use(limiter);
+
+app.register(fastifyHelmet);
 
 initRoutes(app);
 
-app.use(async (req: Request, res: Response, next: NextFunction) => {
+app.setNotFoundHandler(async (req: FastifyRequest, res: FastifyReply) => {
     if (!await redisService.healthCheck()) {
-        res.status(404).json({ message: `Redis is not available` });
-        next(new RedisError(404, `Redis is not available`));
+        res.code(404).send({ message: `Redis is not available` });
+        throw new RedisError(404, `Redis is not available`);
     }
-    res.status(404).json({ message: `Route not found` });
-    next(new ApiError(404, `Route not found`));
+    res.code(404).send({ message: `Route not found` });
+    throw new ApiError(404, `Route not found`);
 });
 
-app.use(errorHandler);
+app.setErrorHandler(errorHandler);
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (req: FastifyRequest, res: FastifyReply) => {
     res.send("SentinelAPI Core is Running");
 });
 
 const PORT: number = env.PORT;
-const server = app.listen(PORT, async () => {
-    await redisService.initializeRules();
-    logger.info(`Server running on port ${PORT}`);
-});
+
+const start = async () => {
+    try {
+        await redisService.initializeRules();
+        await app.listen({ port: PORT});
+        logger.info(`Server running on port ${PORT}`);
+    } catch (error) {
+        app.log.error(error);
+        process.exit(1)
+    }
+}
+
+start();
 
 process.on('SIGTERM', async () => {
     console.debug('SIGTERM signal received: closing HTTP server');
     await redisService.close();
-    server.close(() => {
-      console.debug('HTTP server closed')
-    })
-  })
+    await app.close();
+    console.debug('HTTP server closed');
+});

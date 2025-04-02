@@ -1,9 +1,9 @@
-import express from 'express';
 import { rateLimiterController } from '../controllers/ratelimiter.controller';
 import { authenticate } from '../auth/authentication';
+import { FastifyInstance } from 'fastify';
 
-export const rateLimitRoutes = express.Router();
+export const rateLimitRoutes = async (app: FastifyInstance) => {
+    app.addHook("onRequest", authenticate);
 
-rateLimitRoutes.use(authenticate);
-
-rateLimitRoutes.post('/', rateLimiterController.createRateLimitRule);
+    app.post('/', rateLimiterController.createRateLimitRule);
+}

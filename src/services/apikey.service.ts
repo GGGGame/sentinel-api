@@ -2,7 +2,6 @@ import { QueryResult } from "pg";
 import { ApiKey, InsertApiKey, UpdateApiKey } from "../db";
 import { apiKeysQuery } from "../query/ApiKeys.query";
 import { ApiError } from "../utils/Error/ApiError";
-import crypto from 'crypto';
 import { GenApiKey } from "../utils/apiKeys";
 
 class ApiKeysServices {
@@ -19,6 +18,17 @@ class ApiKeysServices {
         }
 
         return apiKey;
+    }
+
+    async validateData(apiKeyData: InsertApiKey): Promise<boolean> {
+        const validate = await apiKeysQuery.validate(apiKeyData);
+        
+        if (!validate) {
+            // throw new ApiError(400, 'Error data validation');
+            return false;
+        }
+
+        return true;
     }
 
     async createApiKey(user_id: number, apiKeyData: InsertApiKey): Promise<ApiKey> {

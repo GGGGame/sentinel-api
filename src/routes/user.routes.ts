@@ -1,14 +1,16 @@
-import express from 'express';
+import { FastifyInstance } from 'fastify';
 import { authenticate } from '../auth/authentication';
 import { userController } from '../controllers/user.controller';
 
-export const userRoutes = express.Router();
+const auth = { preHandler: authenticate };
 
-userRoutes.get('/', authenticate, userController.getUserById);
+export const userRoutes = async (app: FastifyInstance) => {
+    app.get('/', auth, userController.getUserById);
 
-userRoutes.post('/login', userController.login);
-userRoutes.post('', userController.createUser);
+    app.post('/login', userController.login);
+    app.post('/', userController.createUser);
 
-userRoutes.put('/', authenticate, userController.updateUser);
+    app.put('/', auth, userController.updateUser);
 
-userRoutes.delete('/', authenticate, userController.deleteUser);
+    app.delete('/', auth, userController.deleteUser);
+};

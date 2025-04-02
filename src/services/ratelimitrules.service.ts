@@ -1,4 +1,4 @@
-import { getLimit, InsertRateLimitRule, RateLimitRule } from "../db";
+import { InsertRateLimitRule } from "../db";
 import { rateLimitRulesQuery } from "../query/RateLimitRules.query";
 import { redisService } from "../redis/redis.service";
 import { RedisError } from "../utils/Error/RedisError";
