@@ -1,12 +1,12 @@
-import { NextFunction, Request, Response } from "express";
+import { FastifyReply, FastifyRequest } from "fastify";
 import { ApiError } from "./ApiError";
-import { LoggerService } from "../logger";
+import { LoggerService } from "../Logger.util";
+import { RedisError } from "./RedisError";
 
 export const errorHandler = (
-    err: Error | ApiError,
-    req: Request,
-    res: Response,
-    next: NextFunction
+    err: Error | ApiError | RedisError,
+    req: FastifyRequest,
+    res: FastifyReply,
 ): void => {
     let statusCode = 500;
     let message = 'default error message';
@@ -21,14 +21,14 @@ export const errorHandler = (
     const logger = LoggerService.getInstance();
 
     logger.error(`
-        code: ${statusCode} \t
-        context: ${message} \t
-        path: ${req.path}   \t
-        method: ${req.method} \t
-        error: ${err}   
-    `);
+        code: ${statusCode}
+        context: ${message}
+        path: ${req.url}
+        method: ${req.method}
+        error: ${err.stack || err}   
+    `);    
 
-    res.status(statusCode).json({
+    res.code(statusCode).send({
         success: false,
         message,
         stack: process.env.NODE_ENV === 'development' ? err.stack : undefined

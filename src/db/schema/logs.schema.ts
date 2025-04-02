@@ -1,6 +1,6 @@
 import { integer, json, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
-import { users } from "./users";
-import { apiKeys } from "./apiKeys";
+import { users } from "./users.schema";
+import { apiKeys } from "./apiKeys.schema";
 
 export const logs = pgTable('logs', {
     id: serial('id').primaryKey(),
