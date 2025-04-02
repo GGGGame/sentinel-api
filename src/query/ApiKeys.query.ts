@@ -30,6 +30,15 @@ class ApiKeysQuery {
         return apiKey;
     }
 
+    async validate(apiKeyData: InsertApiKey): Promise<boolean> {
+        const dataService = new MainDataService(apiKeysSchema);
+
+        if(!dataService.validate(apiKeyData)) {
+            return false;
+        }
+        return true;
+    }
+
     async createApiKey(apiKeyData: InsertApiKey): Promise<ApiKey> {
         const dataService = new MainDataService(apiKeysSchema);
 

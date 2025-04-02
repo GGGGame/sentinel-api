@@ -23,21 +23,19 @@
   "homepage": "https://github.com/GGGGame/sentinel-api#readme",
   "description": "",
   "devDependencies": {
-    "@types/express": "^4.17.21",
     "@types/node": "^22.13.10",
     "@types/pg": "^8.11.11",
     "drizzle-kit": "^0.30.5",
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@fastify/helmet": "^13.0.1",
     "bcryptjs": "^3.0.2",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.40.0",
     "esbuild": "^0.25.1",
-    "express": "^4.21.2",
-    "express-rate-limit": "^7.5.0",
     "fastest-validator": "^1.19.0",
-    "helmet": "^8.0.0",
+    "fastify": "^5.2.2",
     "ioredis": "^5.6.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.14.0",

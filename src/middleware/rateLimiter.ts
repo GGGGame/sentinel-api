@@ -1,25 +1,24 @@
-import { NextFunction, Request, Response } from "express";
+import { FastifyReply, FastifyRequest } from "fastify";
 import { ApiError } from "../utils/Error/ApiError";
 import { rateLimitRulesService } from "../services/ratelimitrules.service";
 import { RedisError } from "../utils/Error/RedisError";
 import { RATE_LIMIT } from "../enums/typeRateLimit.enums";
 
-export const rateLimiter = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const rateLimiter = async (req: FastifyRequest, res: FastifyReply): Promise<void> => {
     try {
         const { key, type } = await getKeyAndType(req);
         const allowed = await rateLimitRulesService.checkLimit(key, type);
 
         if (!allowed) {
-            return next(new RedisError(429, `Rate limit [key: ${key} type: ${type}] exceeded. Try again later`));
+            throw new RedisError(429, `Rate limit [key: ${key} type: ${type}] exceeded. Try again later`);
         }
 
-        next();
     } catch (error) {
-        next(new RedisError(400, error.message));
+        throw new RedisError(400, error.message);
     }
 }
 
-const getKeyAndType = async (req: Request): Promise<{ key: string | number, type: string }> => {
+const getKeyAndType = async (req: FastifyRequest): Promise<{ key: string | number, type: string }> => {
     const limitHeader = req.headers['x-limit-rules'] as string;
 
     if (!limitHeader) {
@@ -35,14 +34,14 @@ const getKeyAndType = async (req: Request): Promise<{ key: string | number, type
     return selectByRule(req, headerSplit[0]);
 }
 
-const selectByRule = async (req: Request, header: string): Promise<{ key: string | number, type: string }> => {
+const selectByRule = async (req: FastifyRequest, header: string): Promise<{ key: string | number, type: string }> => {
     switch (header) {
         case "ip":
             return { key: req.ip, type: header};
         case "user":
             return { key: req.user?.id, type: header};
         case "path":
-            return { key: req.path, type: header};
+            return { key: req.url, type: header};
         case "global":
             return { key: header, type: header};
         default:
