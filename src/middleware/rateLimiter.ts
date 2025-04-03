@@ -1,10 +1,10 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyRequest } from "fastify";
 import { ApiError } from "../utils/Error/ApiError";
 import { rateLimitRulesService } from "../services/ratelimitrules.service";
 import { RedisError } from "../utils/Error/RedisError";
 import { RATE_LIMIT } from "../enums/typeRateLimit.enums";
 
-export const rateLimiter = async (req: FastifyRequest, res: FastifyReply): Promise<void> => {
+export const rateLimiter = async (req: FastifyRequest): Promise<void> => {
     try {
         const { key, type } = await getKeyAndType(req);
         const allowed = await rateLimitRulesService.checkLimit(key, type);
@@ -19,13 +19,13 @@ export const rateLimiter = async (req: FastifyRequest, res: FastifyReply): Promi
 }
 
 const getKeyAndType = async (req: FastifyRequest): Promise<{ key: string | number, type: string }> => {
-    const limitHeader = req.headers['x-limit-rules'] as string;
+    const limitHeader = req.headers['x-sentinel-limit-rules'] as string;
 
     if (!limitHeader) {
         throw new ApiError(401, 'Missing limit-rules header');
     }
 
-    const headerSplit = limitHeader.split(':');
+    const headerSplit = limitHeader.split(' ');
     // expected format enum: typeRateLimit.enum.ts
     if (headerSplit.length !== 1 && headerSplit[0] in RATE_LIMIT) {
         throw new ApiError(401, `Requested wrong format of limit-rules, required: ${RATE_LIMIT}`);
