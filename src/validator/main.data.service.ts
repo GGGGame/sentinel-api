@@ -9,7 +9,7 @@ export class MainDataService {
         this.schema = schema;
     }
     
-    public validate(data: any): boolean {
+    public validate(data: any): void {
         const check = this.v.compile(this.schema);
 
         const result = check(data);
@@ -17,7 +17,5 @@ export class MainDataService {
         if (result !== true) {
             throw new ApiError(404, `Error data validation: ${JSON.stringify(result)}`);
         }
-
-        return true;
     }
 }

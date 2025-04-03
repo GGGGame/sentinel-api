@@ -2,12 +2,14 @@ import { users } from "./schema/users.schema";
 import { apiKeys } from "./schema/apiKeys.schema";
 import { logs } from "./schema/logs.schema";
 import { rateLimitRules } from "./schema/rateLimitRules.schema";
+import { apiConfig } from "./schema/apiConfig.schema";
 
 export {
     users,
     apiKeys,
     logs,
-    rateLimitRules
+    rateLimitRules,
+    apiConfig
 }
 
 export type User = typeof users.$inferSelect;
@@ -25,3 +27,6 @@ export type InsertLogEntry = typeof logs.$inferInsert;
 export type RateLimitRule = typeof rateLimitRules.$inferSelect;
 export type getLimit = Pick<typeof rateLimitRules.$inferSelect, "limit">;
 export type InsertRateLimitRule = typeof rateLimitRules.$inferInsert;
+
+export type ApiConfig = typeof apiConfig.$inferSelect;
+export type InsertApiConfig = Omit<typeof apiConfig.$inferSelect, "id" | "createdAt" | "updatedAt">;

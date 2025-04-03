@@ -8,7 +8,10 @@ class ApiKeyController {
     async getApiKeysByUser(req: FastifyRequest, res: FastifyReply): Promise<void> {
         try {
             const keys = await apiKeyService.getApiKeyByUser(req.user?.id);
-            res.send(keys);
+            res.send({
+                status: 'Success',
+                data: keys
+            });
         } catch (error) {
             throw new ApiError(400, error.message);
         }
@@ -17,8 +20,12 @@ class ApiKeyController {
     async createApiKey(req: FastifyRequest<{ Body: InsertApiKey }>, res: FastifyReply): Promise<void> {
         try {
             const data: InsertApiKey = req.body;
-            const newApiKey = await apiKeyService.createApiKey(req.user?.id, data);
-            res.code(200).send(newApiKey);
+            await apiKeyService.createApiKey(req.user?.id, data);
+
+            res.code(200).send({
+                status: 'Success',
+                data: 'ApiKey created successfully'
+            });
         } catch (error) {
             throw new ApiError(400, error.message);
         }
@@ -28,8 +35,11 @@ class ApiKeyController {
         try {
             const { id } = req.params;
             const data = req.body;
-            const updatedApiKey = await apiKeyService.updatekey(+id, req.user?.id, data);
-            res.code(200).send(updatedApiKey);
+            await apiKeyService.updatekey(+id, req.user?.id, data);
+            res.code(200).send({
+                status: 'Success',
+                data: 'ApiKey updated successfully'
+            });
         } catch (error) {
             throw new ApiError(400, error.message);
         }
@@ -38,8 +48,11 @@ class ApiKeyController {
     async deleteApiKey(req: FastifyRequest<{ Params: { id: string }}>, res: FastifyReply): Promise<void> {
         try {
             const { id } = req.params;
-            const deletedApiKey = await apiKeyService.deleteApiKey(+id);
-            res.code(200).send(deletedApiKey);
+            await apiKeyService.deleteApiKey(+id);
+            res.code(200).send({
+                status: 'Success',
+                data: 'ApiKey deleted successfully'
+            });
         } catch (error) {
             throw new ApiError(400, error.message);
         }

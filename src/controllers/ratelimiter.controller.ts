@@ -8,8 +8,11 @@ class RateLimiterController {
     async createRateLimitRule(req: FastifyRequest<{ Body: InsertRateLimitRule}>, res: FastifyReply): Promise<void> {
         try {
             const data = req.body;
-            const newRule = await rateLimitRulesService.createLimitRule(data);
-            res.code(200).send(newRule);
+            rateLimitRulesService.createLimitRule(data);
+            res.code(200).send({
+                status: 'Success',
+                data: 'Rate Limit Rule created successfully'
+            });
         } catch (error) {
             throw new ApiError(400, error.message);
         }
