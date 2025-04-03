@@ -29,7 +29,7 @@ class userServices {
         return user as User;
     }
 
-    async createUser(userData: InsertUser): Promise<QueryResult> {
+    async createUser(userData: InsertUser): Promise<void> {
         const user = await userQuery.findByEmail(userData.email, true);
         if (user) {
             throw new ApiError(400, 'Email already exist');
@@ -37,37 +37,28 @@ class userServices {
 
         userData.password = await passwords.hashPassword(userData.password);
 
-        const newUser = await userQuery.createUser(userData);
-        return newUser;
+        await userQuery.createUser(userData);
     }
 
-    async updateUser(id: number, userData: UpdateUser): Promise<QueryResult> {
-        if (!this.checkUserId(id)) {
-            return null;
-        }
+    async updateUser(id: number, userData: UpdateUser): Promise<void> {
+        this.checkUserId(id)
 
         userData.password = await passwords.hashPassword(userData.password);
 
-        const updatedUser = await userQuery.updateUser(id, userData);
-        return updatedUser;
+        await userQuery.updateUser(id, userData);
     }
 
-    async deleteUser(id: number): Promise<QueryResult> {
-        if (!this.checkUserId(id)) {
-            return null;
-        }
+    async deleteUser(id: number): Promise<void> {
+        this.checkUserId(id)
 
-        const deletedUser = await userQuery.deleteUser(id);
-        return deletedUser;
+        await userQuery.deleteUser(id);
     }
 
-    private async checkUserId(id: number): Promise<boolean> {
+    private async checkUserId(id: number): Promise<void> {
         const user = await userQuery.findById(id);
         if (!user) {
             throw new ApiError(404, `UserId: ${id} not found`);
         }
- 
-        return true;
     }
 }
 

@@ -31,34 +31,24 @@ class UserQuery {
         return onlyEmail ? user as UserEmail : user as User;
     }
 
-    async createUser(userData: InsertUser): Promise<QueryResult> {
+    async createUser(userData: InsertUser): Promise<void> {
         const dataService = new MainDataService(usersSchema);
 
-        if (!dataService.validate(userData)) {
-            return null;
-        }
+        dataService.validate(userData);
 
-        const newUser = await this.db.insert(users).values(userData);
-
-        return newUser;
+        await this.db.insert(users).values(userData);
     }
 
-    async updateUser(id: number, userData: InsertUser): Promise<QueryResult> {
+    async updateUser(id: number, userData: InsertUser): Promise<void> {
         const dataService = new MainDataService(usersSchema);
 
-        if (!dataService.validate(userData)) {
-            return null;
-        }
+        dataService.validate(userData);
 
-        const updatedUser = await this.db.update(users).set(userData).where(eq(users.id, id));
-
-        return updatedUser;
+        await this.db.update(users).set(userData).where(eq(users.id, id));
     }
 
-    async deleteUser(id: number): Promise<QueryResult> {
+    async deleteUser(id: number): Promise<void> {
         const deletedUser = await this.db.delete(users).where(eq(users.id, id));
-
-        return deletedUser;
     }
 }
 

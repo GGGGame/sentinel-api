@@ -11,16 +11,12 @@ class RateLimitRulesQuery {
         return rules;
     }
 
-    async createLimitRule(limitRule: InsertRateLimitRule): Promise<InsertRateLimitRule> {
+    async createLimitRule(limitRule: InsertRateLimitRule): Promise<void> {
         const dataService = new MainDataService(rateLimitSchema);
         
-        if(!dataService.validate(limitRule)) {
-            return null;
-        }
+        dataService.validate(limitRule);
 
-        const [newRule] = await this.db.insert(rateLimitRules).values(limitRule).returning();
-        
-        return newRule;
+        await this.db.insert(rateLimitRules).values(limitRule).returning();
     }
 }
 

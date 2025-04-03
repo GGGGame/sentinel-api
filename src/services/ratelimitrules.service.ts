@@ -29,11 +29,9 @@ class RateLimitRules {
         return currentKeyUsage <= parseInt(limit);
     }
 
-    async createLimitRule(limitRule: InsertRateLimitRule): Promise<InsertRateLimitRule> {
-        const newRule = await rateLimitRulesQuery.createLimitRule(limitRule);
+    async createLimitRule(limitRule: InsertRateLimitRule): Promise<void> {
+        await rateLimitRulesQuery.createLimitRule(limitRule);
         await this.setLimitRules();
-
-        return newRule;
     }
 }
 

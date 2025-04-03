@@ -36,43 +36,25 @@ class ApiKeysQuery {
         return apikey;
     }
 
-    async validate(apiKeyData: InsertApiKey): Promise<boolean> {
+    async createApiKey(apiKeyData: InsertApiKey): Promise<void> {
         const dataService = new MainDataService(apiKeysSchema);
 
-        if(!dataService.validate(apiKeyData)) {
-            return false;
-        }
-        return true;
+        dataService.validate(apiKeyData);
+
+        await this.db.insert(apiKeys).values(apiKeyData).returning();
+    
     }
 
-    async createApiKey(apiKeyData: InsertApiKey): Promise<ApiKey> {
-        const dataService = new MainDataService(apiKeysSchema);
-
-        if(!dataService.validate(apiKeyData)) {
-            return null;
-        }
-
-        const [newApiKey] = await this.db.insert(apiKeys).values(apiKeyData).returning();
-        
-        return newApiKey;
-    }
-
-    async updateApiKey(id: number, apiKeyData: UpdateApiKey): Promise<QueryResult> {
+    async updateApiKey(id: number, apiKeyData: UpdateApiKey): Promise<void> {
         const dataService = new MainDataService(updateApiKeysSchema);
 
-        if(!dataService.validate(apiKeyData)) {
-            return null;
-        }
+        dataService.validate(apiKeyData);
 
-        const updatedApiKey = await this.db.update(apiKeys).set(apiKeyData).where(eq(apiKeys.id, id));
-
-        return updatedApiKey;
+        await this.db.update(apiKeys).set(apiKeyData).where(eq(apiKeys.id, id));
     }
 
-    async deleteApiKey(id: number): Promise<QueryResult> {
-        const deletedApiKey = await this.db.delete(apiKeys).where(eq(apiKeys.id, id));
-        
-        return deletedApiKey;
+    async deleteApiKey(id: number): Promise<void> {
+        await this.db.delete(apiKeys).where(eq(apiKeys.id, id));
     }
 
     async checkUniqueUserKey(name: string, user_id: number): Promise<boolean> {
