@@ -11,6 +11,15 @@ class ApiKeysServices {
         return apiKeys;
     }
 
+    async getApiKeyById(id: string): Promise<ApiKey> {
+        const apiKey = await apiKeysQuery.getApiKeyByKey(id);
+        if (!apiKey) {
+            throw new ApiError(404, `ApiKey: ${id} not found`);
+        }
+
+        return apiKey;
+    }
+
     async getApiKeyByUser(userId: number): Promise<ApiKey> {
         const apiKey = await apiKeysQuery.getApiKeyByUser(userId);
         if (!apiKey) {

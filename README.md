@@ -10,6 +10,6 @@
 - **API Gateway**: Centralized management of API requests, including routing, load balancing, and request/response transformation.
 - **API Key Management**: Create, revoke, and validate API keys with ease.
 - **Rate Limiting**: Protect your APIs from abuse with customizable rate limits.
-- **Authentication**: Secure your APIs with JWT or OAuth2 authentication.
+- **Authentication**: Secure your APIs with JWT
 - **Logging**: Centralized logging for all API requests and responses.
 - **WebSocket Support**: Real-time updates and communication via WebSockets.

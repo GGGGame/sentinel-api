@@ -24,17 +24,6 @@ class ApiKeyController {
         }
     }
 
-    async basicResponse(req: FastifyRequest<{ Body: InsertApiKey }>, res: FastifyReply): Promise<void> {
-        try {
-            if (!apiKeyService.validateData(req.body)) {
-                res.code(400).send({ result: 'Error data validation'});
-            }
-            res.code(200).send({result: 'success'});
-        } catch (error) {
-            throw new ApiError(400, error.message);
-        }
-    }
-
     async updateApiKey(req: FastifyRequest<{ Params: { id: string }, Body: UpdateApiKey}>, res: FastifyReply): Promise<void> {
         try {
             const { id } = req.params;
