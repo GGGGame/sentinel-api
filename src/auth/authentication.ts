@@ -9,7 +9,7 @@ declare module 'fastify' {
     }
 }
 
-export const authenticate = async (req: FastifyRequest, res: FastifyReply) => {
+export const authenticate = async (req: FastifyRequest) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {

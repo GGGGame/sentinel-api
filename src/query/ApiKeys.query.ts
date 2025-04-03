@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { ApiKey, apiKeys, InsertApiKey, UpdateApiKey } from "../db";
 import { databaseService } from "../db/Database.service";
 import { MainDataService } from "../validator/main.data.service";
@@ -26,8 +26,14 @@ class ApiKeysQuery {
     }
 
     async getApiKeyByKey(key: string): Promise<ApiKey> {
-        const [apiKey] = await this.db.select().from(apiKeys).where(eq(apiKeys.key, key));
-        return apiKey;
+        const query = this.db
+            .select()
+            .from(apiKeys)
+            .where(eq(apiKeys.key, sql.placeholder('key')))
+            .prepare("apiKey");
+
+        const [apikey] = await query.execute({ key });
+        return apikey;
     }
 
     async validate(apiKeyData: InsertApiKey): Promise<boolean> {
