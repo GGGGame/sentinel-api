@@ -33,7 +33,10 @@ class UserControllers {
     async getUserById(req: FastifyRequest, res: FastifyReply): Promise<void> {
         try {
             const user = await userService.getUserById(req.user?.id);
-            res.code(200).send(user);
+            res.code(200).send({
+                status: 'Success',
+                data: user
+            });
         } catch (error) {
             throw new ApiError(400, error.message);
         }
@@ -42,8 +45,11 @@ class UserControllers {
     async createUser(req: FastifyRequest<{ Body: InsertUser}>, res: FastifyReply): Promise<void> {
         try {
             const data = req.body;
-            const newUser = await userService.createUser(data);
-            res.code(200).send(newUser);
+            await userService.createUser(data);
+            res.code(200).send({
+                status: 'Success',
+                data: 'User created successfully'
+            });
         } catch (error) {
             throw new ApiError(400, error.message);
         }
@@ -52,8 +58,11 @@ class UserControllers {
     async updateUser(req: FastifyRequest<{ Body: UpdateUser}>, res: FastifyReply): Promise<void> {
         try {
             const data = req.body;
-            const updatedUser = await userService.updateUser(req.user?.id, data);
-            res.code(200).send(updatedUser);
+            await userService.updateUser(req.user?.id, data);
+            res.code(200).send({
+                status: 'Success',
+                data: 'User updated successfully'
+            });
         } catch (error) {
             throw new ApiError(400, error.message);
         }
@@ -61,8 +70,11 @@ class UserControllers {
 
     async deleteUser(req: FastifyRequest, res: FastifyReply): Promise<void> {
         try {
-            const deletedUser = await userService.deleteUser(req.user?.id);
-            res.code(200).send(deletedUser);
+            await userService.deleteUser(req.user?.id);
+            res.code(200).send({
+                status: 'Success',
+                data: 'User deleted successfully'
+            });
         } catch (error) {
             throw new ApiError(400, error.message);
         }

@@ -29,18 +29,7 @@ class ApiKeysServices {
         return apiKey;
     }
 
-    async validateData(apiKeyData: InsertApiKey): Promise<boolean> {
-        const validate = await apiKeysQuery.validate(apiKeyData);
-        
-        if (!validate) {
-            // throw new ApiError(400, 'Error data validation');
-            return false;
-        }
-
-        return true;
-    }
-
-    async createApiKey(user_id: number, apiKeyData: InsertApiKey): Promise<ApiKey> {
+    async createApiKey(user_id: number, apiKeyData: InsertApiKey): Promise<void> {
         const isUnique = await apiKeysQuery.checkUniqueUserKey(apiKeyData.name, user_id);
         if (isUnique) {
             throw new ApiError(409, 'Key name already exist for the user!');
@@ -49,40 +38,31 @@ class ApiKeysServices {
         apiKeyData.key = await GenApiKey(32);
         apiKeyData.userId = user_id;
 
-        const newApiKey = await apiKeysQuery.createApiKey(apiKeyData);
-        return newApiKey;
+        await apiKeysQuery.createApiKey(apiKeyData);
     }
 
-    async updatekey(id: number, user_id: number, apiKeyData: UpdateApiKey): Promise<QueryResult> {
+    async updatekey(id: number, user_id: number, apiKeyData: UpdateApiKey): Promise<void> {
         const isUnique = await apiKeysQuery.checkUniqueUserKey(apiKeyData.name, user_id);
         if (isUnique) {
             throw new ApiError(409, 'Key name already exist for the user!');
         }
 
-        if (!this.checkExistingKey(id)) {
-            return null;
-        }
+        this.checkExistingKey(id)
 
-        const updatedApiKey = await apiKeysQuery.updateApiKey(id, apiKeyData);
-        return updatedApiKey;
+        await apiKeysQuery.updateApiKey(id, apiKeyData);
     }
 
-    async deleteApiKey(id: number): Promise<QueryResult> {
-        if (!this.checkExistingKey(id)) {
-            return null;
-        }
+    async deleteApiKey(id: number): Promise<void> {
+        this.checkExistingKey(id)
 
-        const deletedApiKey = await apiKeysQuery.deleteApiKey(id);
-        return deletedApiKey;
+        await apiKeysQuery.deleteApiKey(id);
     }
 
-    private async checkExistingKey(id: number): Promise<boolean> {
+    private async checkExistingKey(id: number): Promise<void> {
         const keyId = await apiKeysQuery.getApikeyById(id);
         if (!keyId) {
             throw new ApiError(404, `ApiKeyId: ${id} not found`);
         }
-
-        return true;
     }
 }
 
