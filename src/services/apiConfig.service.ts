@@ -4,7 +4,7 @@ import { ApiError } from "../utils/Error/ApiError";
 
 class apiConfigServices {
 
-    async getApiConfigbyUser(userId: number): Promise<ApiConfig[]> {
+    async getApiConfigbyUser(userId: number): Promise<ApiConfig> {
         const config = await apiConfigQuery.getApiConfigsByUser(userId);
         if (!config) {
             throw new ApiError(404, `ApiConfig for UserId: ${userId} not found`)
