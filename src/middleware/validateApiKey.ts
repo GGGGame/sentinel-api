@@ -2,7 +2,6 @@ import { FastifyRequest } from "fastify";
 import { ApiError } from "../utils/Error/ApiError";
 import { apiKeyService } from "../services/apikey.service";
 import { redisService } from "../redis/redis.service";
-import { ApiKey } from "../db";
 
 export const validateApiKey = async (req: FastifyRequest) => {
     try {

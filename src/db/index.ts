@@ -3,6 +3,7 @@ import { apiKeys } from "./schema/apiKeys.schema";
 import { logs } from "./schema/logs.schema";
 import { rateLimitRules } from "./schema/rateLimitRules.schema";
 import { apiConfig } from "./schema/apiConfig.schema";
+import { TransformRequest, TransformResponse } from "../Interfaces/TransformerType";
 
 export {
     users,
@@ -28,5 +29,8 @@ export type RateLimitRule = typeof rateLimitRules.$inferSelect;
 export type getLimit = Pick<typeof rateLimitRules.$inferSelect, "limit">;
 export type InsertRateLimitRule = typeof rateLimitRules.$inferInsert;
 
-export type ApiConfig = typeof apiConfig.$inferSelect;
+export type ApiConfig = Omit<typeof apiConfig.$inferSelect, 'transformRequest' | 'transformResponse'> & {
+    transformRequest?: TransformRequest,
+    transformResponse?: TransformResponse
+}
 export type InsertApiConfig = Omit<typeof apiConfig.$inferSelect, "id" | "createdAt" | "updatedAt">;
