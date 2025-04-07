@@ -1,0 +1,1 @@
+export const hideSensitiveData = (data: string): string => null;

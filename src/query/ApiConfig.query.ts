@@ -12,14 +12,14 @@ class ApiConfigQuery {
         return config;
     }
 
-    async getApiConfigsByUser(userId: number): Promise<ApiConfig[]> {
+    async getApiConfigsByUser(userId: number): Promise<ApiConfig> {
         const query = this.db
             .select()
             .from(apiConfig)
             .where(eq(apiConfig.userId, sql.placeholder('userId')))
             .prepare('apiConfig');
 
-        const config = await query.execute({ userId });
+        const [config] = await query.execute({ userId });
         return config;
     }
 
