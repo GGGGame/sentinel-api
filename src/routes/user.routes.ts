@@ -7,14 +7,14 @@ import { transformResponse } from '../middleware/transformResponse';
 
 const onRequestMiddleware = [ authenticate, validateApiKey ];
 const preHandlerMiddleware = [ transformRequest ];
-const onSendMiddleware = [ transformResponse ];
+const preSerialization = [ transformResponse ];
 
 export const userRoutes = async (app: FastifyInstance) => {
 
     app.get('/', {
         onRequest: onRequestMiddleware,
         preHandler: preHandlerMiddleware,
-        onSend: onSendMiddleware
+        preSerialization: preSerialization
     }, userController.getUserById);
 
     app.post('/login', userController.login);

@@ -8,7 +8,7 @@ class ApiKeyController {
     async getApiKeysByUser(req: FastifyRequest, res: FastifyReply): Promise<void> {
         try {
             const keys = await apiKeyService.getApiKeyByUser(req.user?.id);
-            res.send({
+            await res.send({
                 status: 'Success',
                 data: keys
             });
@@ -22,7 +22,7 @@ class ApiKeyController {
             const data: InsertApiKey = req.body;
             await apiKeyService.createApiKey(req.user?.id, data);
 
-            res.code(200).send({
+            await res.code(200).send({
                 status: 'Success',
                 data: 'ApiKey created successfully'
             });
@@ -36,7 +36,7 @@ class ApiKeyController {
             const { id } = req.params;
             const data = req.body;
             await apiKeyService.updatekey(+id, req.user?.id, data);
-            res.code(200).send({
+            await res.code(200).send({
                 status: 'Success',
                 data: 'ApiKey updated successfully'
             });
@@ -49,7 +49,7 @@ class ApiKeyController {
         try {
             const { id } = req.params;
             await apiKeyService.deleteApiKey(+id);
-            res.code(200).send({
+            await res.code(200).send({
                 status: 'Success',
                 data: 'ApiKey deleted successfully'
             });

@@ -11,7 +11,6 @@ export const apiConfigRoutes = async (app: FastifyInstance) => {
     app.addHook("onRequest", validateApiKey)
     app.addHook("preHandler", rateLimiter);
     app.addHook("preHandler", transformRequest);
-    app.addHook("onSend", transformResponse);
 
     app.get("/", apiConfigController.getApiConfigByUser);
 

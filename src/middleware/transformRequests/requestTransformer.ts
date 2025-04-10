@@ -13,7 +13,6 @@ export class RequestTransformer {
 
     async transform(key: string, body: Record<string, any>, field: string): Promise<void> {
         const normalizer = this.normalizer[key];
-        console.log(normalizer);
         if (!normalizer || !body[field]) {
             return;
         }

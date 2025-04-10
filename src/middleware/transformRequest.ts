@@ -5,7 +5,7 @@ import { RequestTransformer } from "./transformRequests/requestTransformer";
 
 export const transformRequest = async (req: FastifyRequest<{ Body: Record<string, string> }>, res: FastifyReply): Promise<void> => {
     try {
-        const transformHeader = req.headers["x-sentinel-transform"] as string;
+        const transformHeader = req.headers["x-sentinel-transform-request"] as string;
         // Simply stop the middleware if the header is not present or expected
         // There is no need to return an error
         if (!transformHeader || req.user.id == null) {

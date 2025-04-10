@@ -20,10 +20,10 @@ initRoutes(app);
 
 app.setNotFoundHandler(async (req: FastifyRequest, res: FastifyReply) => {
     if (!await redisService.healthCheck()) {
-        res.code(404).send({ message: `Redis is not available` });
+        await res.code(404).send({ message: `Redis is not available` });
         throw new RedisError(404, `Redis is not available`);
     }
-    res.code(404).send({ message: `Route not found` });
+    await res.code(404).send({ message: `Route not found` });
     throw new ApiError(404, `Route not found`);
 });
 
@@ -41,7 +41,7 @@ const start = async () => {
         await app.listen({ port: PORT});
         logger.info(`Server running on port ${PORT}`);
     } catch (error) {
-        app.log.error(error);
+        logger.error(error.message);
         process.exit(1)
     }
 }
@@ -49,8 +49,8 @@ const start = async () => {
 start();
 
 process.on('SIGTERM', async () => {
-    console.debug('SIGTERM signal received: closing HTTP server');
+    logger.debug('SIGTERM signal received: closing HTTP server');
     await redisService.close();
     await app.close();
-    console.debug('HTTP server closed');
+    logger.debug('HTTP server closed');
 });
