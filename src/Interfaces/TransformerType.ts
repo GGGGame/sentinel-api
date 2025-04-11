@@ -1,9 +1,8 @@
 export type TransformRequest = {
-    headers?: Record<string, string>,
-    bodyTemplate?: string,
+    stringToLower?: string[],
+    stringTrim?: string[],
 }
 
 export type TransformResponse = {
-    headers?: Record<string, string>,
-    bodyTemplate?: string,
+    hideSensitiveData?: string[],
 }
