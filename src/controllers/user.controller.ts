@@ -24,7 +24,7 @@ class UserControllers {
 
             const token = jwtService.generateToken(user);
             
-            res.code(200).send({ token });
+            await res.code(200).send({ token });
         } catch (error) {
             throw new ApiError(400, error.message);
         }
@@ -33,7 +33,7 @@ class UserControllers {
     async getUserById(req: FastifyRequest, res: FastifyReply): Promise<void> {
         try {
             const user = await userService.getUserById(req.user?.id);
-            res.code(200).send({
+            await res.code(200).send({
                 status: 'Success',
                 data: user
             });
@@ -46,7 +46,7 @@ class UserControllers {
         try {
             const data = req.body;
             await userService.createUser(data);
-            res.code(200).send({
+            await res.code(200).send({
                 status: 'Success',
                 data: 'User created successfully'
             });
@@ -59,7 +59,7 @@ class UserControllers {
         try {
             const data = req.body;
             await userService.updateUser(req.user?.id, data);
-            res.code(200).send({
+            await res.code(200).send({
                 status: 'Success',
                 data: 'User updated successfully'
             });
@@ -71,7 +71,7 @@ class UserControllers {
     async deleteUser(req: FastifyRequest, res: FastifyReply): Promise<void> {
         try {
             await userService.deleteUser(req.user?.id);
-            res.code(200).send({
+            await res.code(200).send({
                 status: 'Success',
                 data: 'User deleted successfully'
             });

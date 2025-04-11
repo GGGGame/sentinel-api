@@ -11,6 +11,6 @@ export class ResponseTransformer {
             return;
         }
 
-        payload[key] = normalizer(payload);
+        payload = normalizer(payload);
     }
 }
