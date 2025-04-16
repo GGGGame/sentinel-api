@@ -8,7 +8,7 @@ class ApiConfigController {
     async getApiConfigByUser(req: FastifyRequest, res: FastifyReply): Promise<void> {
         try {
             const apiConfig = await apiConfigService.getApiConfigbyUser(req.user?.id);
-            res.code(200).send({
+            await res.code(200).send({
                 status: 'Success',
                 data: apiConfig
             });
@@ -21,7 +21,7 @@ class ApiConfigController {
         try {
             const data = req.body;
             await apiConfigService.createApiConfig(req.user?.id, data);
-            res.code(200).send({
+            await res.code(200).send({
                 status: 'Success',
                 data: 'ApiConfig created successfully'
             });
@@ -35,7 +35,7 @@ class ApiConfigController {
             const { id } = req.params;
             const data = req.body;
             await apiConfigService.updateApiConfig(+id, data);
-            res.code(200).send({
+            await res.code(200).send({
                 status: 'Success',
                 data: 'ApiConfig updated successfully'
             });
@@ -48,7 +48,7 @@ class ApiConfigController {
         try {
             const { id } = req.params;
             await apiConfigService.deleteApiConfig(+id);
-            res.code(200).send({
+            await res.code(200).send({
                 status: 'Success',
                 data: 'ApiConfig deleted successfully'
             });

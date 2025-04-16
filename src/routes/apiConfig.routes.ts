@@ -11,7 +11,7 @@ export const apiConfigRoutes = async (app: FastifyInstance) => {
     app.addHook("onRequest", validateApiKey)
     app.addHook("preHandler", rateLimiter);
     app.addHook("preHandler", transformRequest);
-    app.addHook("onSend", transformResponse);
+    app.addHook("preSerialization", transformResponse);
 
     app.get("/", apiConfigController.getApiConfigByUser);
 
@@ -23,6 +23,6 @@ export const apiConfigRoutes = async (app: FastifyInstance) => {
 
     app.post("/test", (req, reply) => {
         const { body } = req;
-        reply.send({ message: "Test endpoint hit", body });
+        reply.send({ message: "Test endpoint hit", data: body });
     });
 }

@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { ApiError } from "../utils/Error/ApiError";
 import { apiConfigService } from "../services/apiConfig.service";
 import { RequestTransformer } from "./transformRequests/requestTransformer";
+import { transformerHeader } from "../enums/transformerHeader.enum";
 
 export const transformRequest = async (req: FastifyRequest<{ Body: Record<string, string> }>, res: FastifyReply): Promise<void> => {
     try {
@@ -13,8 +14,12 @@ export const transformRequest = async (req: FastifyRequest<{ Body: Record<string
         }
 
         const headerSplit = transformHeader.split(" ");
-        if (headerSplit.length !== 1) {
+        if (headerSplit.length > 2) {
             throw new ApiError(401, "Invalid transform header format");
+        }
+
+        if (!headerSplit.includes(transformerHeader.request)) {
+            return;
         }
 
         const transform = await apiConfigService.getApiConfigbyUser(req.user.id);
@@ -26,13 +31,13 @@ export const transformRequest = async (req: FastifyRequest<{ Body: Record<string
 
         const transformer = new RequestTransformer();
         
-        for (const key in transformReq) {
-            if (typeof transformReq[key] !== "string" || 
-                !req.body[transformReq[key]]) {
-                throw new ApiError(401, `Invalid format of transform key: ${key}`);
+        for (const [keys, value] of Object.entries(transformReq)) {
+            for (const data in value) {
+                if (!req.body[transformReq[keys][data]]) {
+                    continue;
+                }
+                await transformer.transform(keys, req.body, transformReq[keys][data]);
             }
-
-            await transformer.transform(key, req.body, transformReq[key]);
         }
 
     } catch (error) {

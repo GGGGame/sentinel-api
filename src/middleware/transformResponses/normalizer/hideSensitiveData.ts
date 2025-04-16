@@ -1,1 +1,3 @@
-export const hideSensitiveData = (data: string): string => null;
+export const hideSensitiveData = (payload: any, field: string): any => {
+    return delete payload[field];
+}
