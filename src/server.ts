@@ -39,7 +39,7 @@ const HOST: string = env.HOST;
 const start = async () => {
     try {
         await redisService.initializeRules();
-        app.listen({ port: 3030, host: '0.0.0.0' }, (err, address) => {
+        app.listen({ port: 3030, host: HOST }, (err, address) => {
             if (err) {
                 logger.error(err.message)
                 process.exit(1)

@@ -5,7 +5,7 @@ services:
     build: .
     container_name: sentinel-api
     ports:
-      - "3031:3030"
+      - "3030:3030"
     env_file:
       - .env
     depends_on:
