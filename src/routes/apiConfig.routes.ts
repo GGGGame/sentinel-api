@@ -8,7 +8,7 @@ import { transformResponse } from "../middleware/transformResponse";
 
 export const apiConfigRoutes = async (app: FastifyInstance) => {
     app.addHook("onRequest", authenticate);
-    app.addHook("onRequest", validateApiKey)
+    app.addHook("onRequest", validateApiKey);
     app.addHook("preHandler", rateLimiter);
     app.addHook("preHandler", transformRequest);
     app.addHook("preSerialization", transformResponse);

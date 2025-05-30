@@ -20,7 +20,7 @@ class ApiConfigController {
     async createApiConfig(req: FastifyRequest<{ Body: InsertApiConfig }>, res: FastifyReply): Promise<void> {
         try {
             const data = req.body;
-            await apiConfigService.createApiConfig(req.user?.id, data);
+            await apiConfigService.createApiConfig(req.user.id, data);
             await res.code(200).send({
                 status: 'Success',
                 data: 'ApiConfig created successfully'
