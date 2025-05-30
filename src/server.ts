@@ -15,6 +15,9 @@ const app: FastifyInstance = fastify({
 });
 
 app.register(fastifyHelmet);
+app.register(require('@fastify/cors'), {
+    origin: '*',
+});
 
 initRoutes(app);
 

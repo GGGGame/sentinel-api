@@ -31,6 +31,7 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@fastify/cors": "^11.0.1",
     "@fastify/helmet": "^13.0.1",
     "bcryptjs": "^3.0.2",
     "commander": "^14.0.0",
