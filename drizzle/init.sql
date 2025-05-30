@@ -1,4 +1,15 @@
 CREATE TYPE "public"."type_rule" AS ENUM('user', 'ip', 'endpoint', 'global');--> statement-breakpoint
+CREATE TABLE "api_config" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" integer NOT NULL,
+	"transform_request" jsonb DEFAULT '{}'::jsonb,
+	"transform_response" jsonb DEFAULT '{}'::jsonb,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "api_config_user_id_unique" UNIQUE("user_id")
+);
+--> statement-breakpoint
 CREATE TABLE "api_keys" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"key" varchar(64) NOT NULL,
@@ -47,6 +58,7 @@ CREATE TABLE "users" (
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
+ALTER TABLE "api_config" ADD CONSTRAINT "api_config_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "api_keys" ADD CONSTRAINT "api_keys_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "logs" ADD CONSTRAINT "logs_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "logs" ADD CONSTRAINT "logs_api_key_id_api_keys_id_fk" FOREIGN KEY ("api_key_id") REFERENCES "public"."api_keys"("id") ON DELETE no action ON UPDATE no action;
