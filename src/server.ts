@@ -32,7 +32,7 @@ app.setNotFoundHandler(async (req: FastifyRequest, res: FastifyReply) => {
 
 app.setErrorHandler(errorHandler);
 
-app.get("/test", async (req: FastifyRequest, res: FastifyReply) => {
+app.get("/", async (req: FastifyRequest, res: FastifyReply) => {
     await res.send("SentinelAPI Core is Running");
 });
 
