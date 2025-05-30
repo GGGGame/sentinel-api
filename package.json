@@ -3,16 +3,18 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
-    "start-pm2": "pm2 start ./scripts/ecosystem.config.js && pm2 logs",
-    "stop": "pm2 stop all",
-    "start": "npm run build && npm run start-pm2",
-    "restart": "npm run build && pm2 restart all && pm2 logs"
+    "start": "npm run build && pm2-runtime scripts/ecosystem.config.js",
+    "start-dev": "npx ts-node-dev src/index.ts",
+    "restart": "npm run build && pm2 restart all && pm2 logs",
+    "stop": "pm2 stop all"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/GGGGame/sentinel-api.git"
+  },
+  "bin": {
+    "sentinel": "./dist/CLI/cli.js"
   },
   "keywords": [],
   "author": "",
@@ -25,12 +27,13 @@
   "devDependencies": {
     "@types/node": "^22.13.10",
     "@types/pg": "^8.11.11",
-    "drizzle-kit": "^0.30.5",
+    "drizzle-kit": "^0.31.1",
     "typescript": "^5.8.2"
   },
   "dependencies": {
     "@fastify/helmet": "^13.0.1",
     "bcryptjs": "^3.0.2",
+    "commander": "^14.0.0",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.40.0",
     "esbuild": "^0.25.1",

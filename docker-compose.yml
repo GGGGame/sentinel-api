@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  sentinel-api:
+    build: .
+    container_name: sentinel-api
+    ports:
+      - "3030:3030"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    # volumes:
+    #   - .:/app
+    command: pm2-runtime scripts/ecosystem.config.js
+
+  postgres:
+    image: postgres:latest
+    container_name: sentinel-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: sentinelapi
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./drizzle/init.sql:/docker-entrypoint-initdb.d/init.sql 
+
+  redis:
+    image: redis:latest
+    container_name: sentinel-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
