@@ -202,3 +202,54 @@ sentinel test
 ```
 
 ---
+
+## 📝 API Execution Order
+
+Follow this sequence to set up and use the API securely and efficiently:
+
+1. **Create User**  
+   `POST /api/v1/users`  
+   _Registers a new user in the database._
+
+2. **Login**  
+   `POST /api/v1/users/login`  
+   _Authenticates the user and returns a JWT token._  
+   > After login, use the header:  
+   > `Authorization: Bearer <token>`
+
+3. **Create Rate Limit Rule**  
+   `POST /api/v1/rules`  
+   _Creates a rate-limit rule. Use keys like: `IP`, `userId`, `url`, `global`. The `type` must match the key._  
+   > After this, you can use the header:  
+   > `x-sentinel-limit-rules: <key>`  
+   > The type will be detected and enforced automatically if the rule exists.
+
+4. **Create API Key**  
+   `POST /api/v1/apikey`  
+   _Generates a new API key for the user._
+
+5. **Retrieve API Key**  
+   `GET /api/v1/apikey`  
+   _Fetches the generated API key._  
+   > After creation and retrieval, use the header:  
+   > `x-sentinel-api-key: <API_KEY>`
+
+6. **Create API Config (Request/Response Transformation Rules)**  
+   `POST /api/v1/apiconfig`  
+   _Defines transformation rules for requests and responses._  
+   > After this, you can use the header:  
+   > `x-sentinel-transform: request`, `x-sentinel-transform: response`, or both.
+
+---
+
+**Summary of Header Usage:**
+- **JWT Authentication:**  
+  `Authorization: Bearer <token>`
+- **Rate Limiting:**  
+  `x-sentinel-limit-rules: <key>`
+- **API Key:**  
+  `x-sentinel-api-key: <API_KEY>`
+- **Request/Response Transformation:**  
+  `x-sentinel-transform: request`, `x-sentinel-transform: response`
+
+---
