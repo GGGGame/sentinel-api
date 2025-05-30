@@ -4,11 +4,14 @@ export const apps = [
         script: "./dist/server.js",
         instances: 1,
         autorestart: true,
+        exec_mode: "fork",
         watch: false,
-        max_memory_restartg: "1G",
+        max_memory_restart: "1G",
         env: {
-            NODE_ENV: "production"
-        }
+            NODE_ENV: "development",
+            PORT: 3030,
+            HOST: "0.0.0.0"  // Explicitly set host
+        },
 
     }
 ]

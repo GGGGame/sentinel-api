@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
-    "start-pm2": "pm2 start ./scripts/ecosystem.config.js && pm2 logs",
-    "stop": "pm2 stop all",
-    "start": "npm run build && npm run start-pm2",
-    "restart": "npm run build && pm2 restart all && pm2 logs"
+    "start": "npm run build && pm2-runtime scripts/ecosystem.config.js",
+    "start-dev": "npx ts-node-dev src/index.ts",
+    "restart": "npm run build && pm2 restart all && pm2 logs",
+    "stop": "pm2 stop all"
   },
   "repository": {
     "type": "git",
