@@ -88,7 +88,7 @@ All endpoints are versioned under `/api/v1/`.
   {
     "key": "{key}",
     "name": "{key_name}",
-    "userId": {user_id}
+    "userId": "{user_id}"
   }
   ```
 - `PUT    /api/v1/apikey/{id}` — Update API Key  
@@ -105,7 +105,7 @@ All endpoints are versioned under `/api/v1/`.
 {
   "key": "{api_key}",
   "name": "{key_name}",
-  "userId": {user_id}
+  "userId": "{user_id}"
 }
 ```
 
@@ -116,8 +116,8 @@ All endpoints are versioned under `/api/v1/`.
   {
     "key": "{key}",
     "type": "{user|ip|endpoint|global}",
-    "limit": {limit},
-    "window": {window_seconds}
+    "limit": "{limit}",
+    "window": "{window_seconds}"
   }
   ```
 
