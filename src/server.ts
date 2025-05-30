@@ -29,16 +29,22 @@ app.setNotFoundHandler(async (req: FastifyRequest, res: FastifyReply) => {
 
 app.setErrorHandler(errorHandler);
 
-app.get("/", (req: FastifyRequest, res: FastifyReply) => {
-    res.send("SentinelAPI Core is Running");
+app.get("/test", async (req: FastifyRequest, res: FastifyReply) => {
+    await res.send("SentinelAPI Core is Running");
 });
 
 const PORT: number = env.PORT;
+const HOST: string = env.HOST;
 
 const start = async () => {
     try {
         await redisService.initializeRules();
-        await app.listen({ port: PORT});
+        app.listen({ port: 3030, host: HOST }, (err, address) => {
+            if (err) {
+                logger.error(err.message)
+                process.exit(1)
+            }
+        });
         logger.info(`Server running on port ${PORT}`);
     } catch (error) {
         logger.error(error.message);
