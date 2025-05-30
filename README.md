@@ -154,14 +154,7 @@ All endpoints are versioned under `/api/v1/`.
 
 ---
 
-### 5. **Request & Response Validation**
-
-All endpoints require specific fields in the request body.  
-**Example bodies above use placeholders** (`{name}`, `{email}`, `{password}`, `{key}`, `{user_id}`, `{id}`) — replace with your actual values.
-
----
-
-### 6. **Transform Request & Response**
+### 5. **Transform Request & Response**
 
 You can enable automatic transformation of request and response data using the `x-sentinel-transform` header and user-specific config.
 
@@ -197,7 +190,7 @@ You can enable automatic transformation of request and response data using the `
 
 ---
 
-### 8. **CLI**
+### 7. **CLI**
 
 A CLI (`sentinel`) is under development:
 
