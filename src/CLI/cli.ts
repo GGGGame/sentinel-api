@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { env } from '../config/environment';
+import { registerCommands } from './Commands/registerCommands';
 
 const program = new Command();
 
@@ -9,11 +10,6 @@ program
   .description('CLI for SentinelAPI')
   .version('1.0.0');
 
-program
-  .command('test')
-  .description('Start the SentinelAPI server')
-  .action(() => {
-    console.log('Test command sentinel-api')
-  });
+registerCommands(program);
 
 program.parse(env.ARGV);

@@ -1,5 +1,5 @@
 import { QueryResult } from "pg";
-import { ApiKey, InsertApiKey, UpdateApiKey } from "../db";
+import { ApiKey, InsertApiKey, InsertApiKeySelf, UpdateApiKey } from "../db";
 import { apiKeysQuery } from "../query/ApiKeys.query";
 import { ApiError } from "../utils/Error/ApiError";
 import { GenApiKey } from "../utils/apiKeys";
@@ -29,16 +29,18 @@ class ApiKeysServices {
         return apiKey;
     }
 
-    async createApiKey(user_id: number, apiKeyData: InsertApiKey): Promise<void> {
+    async createApiKey(user_id: number, apiKeyData: InsertApiKeySelf): Promise<void> {
         const isUnique = await apiKeysQuery.checkUniqueUserKey(apiKeyData.name, user_id);
         if (isUnique) {
             throw new ApiError(409, 'Key name already exist for the user!');
         }
 
-        apiKeyData.key = await GenApiKey(32);
-        apiKeyData.userId = user_id;
+        const data = apiKeyData as InsertApiKey;
 
-        await apiKeysQuery.createApiKey(apiKeyData);
+        data.key = await GenApiKey(32);
+        data.userId = user_id;
+
+        await apiKeysQuery.createApiKey(data);
     }
 
     async updatekey(id: number, user_id: number, apiKeyData: UpdateApiKey): Promise<void> {

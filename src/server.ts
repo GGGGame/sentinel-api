@@ -19,6 +19,7 @@ app.register(require('@fastify/cors'), {
     origin: '*',
 });
 
+
 initRoutes(app);
 
 app.setNotFoundHandler(async (req: FastifyRequest, res: FastifyReply) => {
