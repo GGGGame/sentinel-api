@@ -1,7 +1,7 @@
 import { boolean, integer, jsonb, pgEnum, pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
 import { users } from "./users.schema";
 
-const typeEnum = pgEnum('method_type', ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD']);
+export const typeEnum = pgEnum('type_methods', ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD']);
 
 export const validation = pgTable('validations', {
     id: serial('id').primaryKey(),

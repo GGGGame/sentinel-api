@@ -12,4 +12,4 @@ RUN npm run build
 
 EXPOSE 3030
 
-CMD ["pm2-runtime", "scripts/ecosystem.config.js"]
+CMD sh -c "npx drizzle-kit generate && npx drizzle-kit push && pm2-runtime scripts/ecosystem.config.js"
