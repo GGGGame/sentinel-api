@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "npm run build && pm2-runtime scripts/ecosystem.config.js",
+    "drizzle-generate": "npx drizzle-kit generate",
+    "drizzle-push": "npx drizzle-kit push",
+    "start": "npm run drizzle-generate && npm run drizzle-push && npm run build && pm2-runtime scripts/ecosystem.config.js",
     "start-dev": "npx ts-node-dev src/index.ts",
     "restart": "npm run build && pm2 restart all && pm2 logs",
     "stop": "pm2 stop all"

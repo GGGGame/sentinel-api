@@ -1,7 +1,7 @@
 import { ApiError } from "../utils/Error/ApiError";
 import { apiKeyService } from "../services/apikey.service";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { InsertApiKey, UpdateApiKey } from "../db";
+import { InsertApiKey, InsertApiKeySelf, UpdateApiKey } from "../db";
 
 class ApiKeyController {
     
@@ -17,12 +17,12 @@ class ApiKeyController {
         }
     }
 
-    async createApiKey(req: FastifyRequest<{ Body: InsertApiKey }>, res: FastifyReply): Promise<void> {
+    async createApiKey(req: FastifyRequest<{ Body: InsertApiKeySelf }>, res: FastifyReply): Promise<void> {
         try {
-            const data: InsertApiKey = req.body;
+            const data: InsertApiKeySelf = req.body;
             await apiKeyService.createApiKey(req.user?.id, data);
 
-            await res.code(200).send({
+            await res.code(201).send({
                 status: 'Success',
                 data: 'ApiKey created successfully'
             });
