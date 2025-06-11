@@ -4,7 +4,7 @@ import { redisService } from "../redis/redis.service";
 import { ApiError } from "../utils/Error/ApiError";
 import { MainDataService } from "../validator/main.data.service";
 
-class ValidationServices {
+class ValidationService {
 
     async getValidationById(id: number): Promise<Validation> {
         const validation = await validationQuery.getValidationById(id);
@@ -57,6 +57,15 @@ class ValidationServices {
         }
     }
 
+    async setValidation(): Promise<void> {
+        const validations = await validationQuery.getValidations();
+        for (const validation of validations) {
+            const key = `validation:${validation.userId}:${validation.route}:${validation.method}`;
+            const schema = JSON.stringify(validation.schema);
+            await redisService.set(key, schema);
+        }
+    }
+
     async checkValidation(userId: number, route: string, method: string, body: any): Promise<boolean> {
         const validationKey = `validation:${userId}:${route}:${method}`;
         const validationSchema = await redisService.get(validationKey);
@@ -79,4 +88,4 @@ class ValidationServices {
     }
 }
 
-export const validationServices = new ValidationServices();
+export const validationService = new ValidationService();

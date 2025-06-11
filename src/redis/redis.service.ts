@@ -3,6 +3,7 @@ import { env } from "../config/environment";
 import { RedisError } from "../utils/Error/RedisError";
 import { rateLimitRulesService } from "../services/ratelimitrules.service";
 import { LoggerService } from "../utils/Logger.util";
+import { validationService } from "../services/validation.service";
 class RedisService {
     private client: Redis;
     private isInitialized: boolean = false;
@@ -20,6 +21,7 @@ class RedisService {
         if (this.isInitialized) return;
 
         await rateLimitRulesService.setLimitRules();
+        await validationService.setValidation();
         this.isInitialized = true;
         this.logger.info("Rate limit initialized!");
     }
