@@ -7,6 +7,11 @@ import { validationSchema } from "../validator/models/Validation.validator.model
 class ValidationQuery {
     private db = databaseService.db;
 
+    async getValidations(): Promise<Validation[]> {
+        const validations = await this.db.select().from(validation);
+        return validations;
+    }
+
     async getValidationById(id: number): Promise<Validation> {
         const [validate] = await this.db.select().from(validation).where(eq(validation.id, id));
         return validate;

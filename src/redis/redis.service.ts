@@ -3,6 +3,7 @@ import { env } from "../config/environment";
 import { RedisError } from "../utils/Error/RedisError";
 import { rateLimitRulesService } from "../services/ratelimitrules.service";
 import { LoggerService } from "../utils/Logger.util";
+import { validationService } from "../services/validation.service";
 class RedisService {
     private client: Redis;
     private isInitialized: boolean = false;
@@ -20,12 +21,21 @@ class RedisService {
         if (this.isInitialized) return;
 
         await rateLimitRulesService.setLimitRules();
+        await validationService.setValidation();
         this.isInitialized = true;
         this.logger.info("Rate limit initialized!");
     }
 
     getClient(): Redis {
         return this.client;
+    }
+
+    async keys(pattern: string): Promise<string[]> {
+        try {
+            return await this.client.keys(pattern);
+        } catch (error) {
+            throw new RedisError(500, `Error fetching keys with pattern ${pattern} - ${error.message}`)
+        }
     }
 
     async set(key: string, value: string, expiry?: number): Promise<void> {
@@ -57,6 +67,20 @@ class RedisService {
             return count;
         } catch (error) {
             throw new RedisError(500, `Error incrementing Redis key ${key} - ${error.message}`)
+        }
+    }
+
+    async del(key: string): Promise<void> {
+        try {
+            const result = await this.client.del(key);
+            if (result === 0) {
+                throw new RedisError(404, `Key ${key} not found in Redis`);
+            }
+        } catch (error) {
+            if (error instanceof RedisError) {
+                throw error; // Re-throw custom RedisError
+            }
+            throw new RedisError(500, `Error deleting Redis key ${key} - ${error.message}`);
         }
     }
 

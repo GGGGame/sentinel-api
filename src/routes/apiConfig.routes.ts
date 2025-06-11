@@ -5,6 +5,9 @@ import { validateApiKey } from "../middleware/validateApiKey";
 import { authenticate } from "../auth/authentication";
 import { transformRequest } from "../middleware/transformRequest";
 import { transformResponse } from "../middleware/transformResponse";
+import { validateData } from "../middleware/validation";
+
+const preValidation = [ validateData ];
 
 export const apiConfigRoutes = async (app: FastifyInstance) => {
     app.addHook("onRequest", authenticate);
@@ -15,9 +18,13 @@ export const apiConfigRoutes = async (app: FastifyInstance) => {
 
     app.get("/", apiConfigController.getApiConfigByUser);
 
-    app.post("/", apiConfigController.createApiConfig);
+    app.post("/", {
+        preValidation: preValidation,
+    }, apiConfigController.createApiConfig);
 
-    app.put("/:id", apiConfigController.updateApiConfig);
+    app.put("/:id", {
+        preValidation: preValidation,
+    }, apiConfigController.updateApiConfig);
 
     app.delete("/:id", apiConfigController.deleteApiConfig);
 

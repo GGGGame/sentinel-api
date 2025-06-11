@@ -10,7 +10,7 @@
 - **API Gateway**: Centralized management of API requests, including routing, load balancing, and request/response transformation.
 - **API Key Management**: Create, revoke, and validate API keys with ease.
 - **Rate Limiting**: Protect your APIs from abuse with customizable rate limits.
-- **Authentication**: Secure your APIs with JWT
+- **Authentication**: Secure your APIs with JWT.
 - **Logging**: Centralized logging for all API requests and responses.
 - **WebSocket Support**: Real-time updates and communication via WebSockets.
 
@@ -25,13 +25,13 @@
 
 Create a `.env` file in the project root with the following structure:
 
-## NB: To use SentinelAPI with Docker, you should add the name of the service instead of localhost:
-## EX: REDIS_URL=redis://redis:6379
+> **NB:** To use SentinelAPI with Docker, you should add the name of the service instead of localhost:  
+> **EX:** `REDIS_URL=redis://redis:6379`
 
 ```env
 PORT= # The Current port configured in docker is 3030
 HOST= # The use of 0.0.0.0 is required because of Fastify and Docker to run in local
-DATABASE_URL= # SentinelAPI currently support just PostgreSQL
+DATABASE_URL= # SentinelAPI currently supports just PostgreSQL
 REDIS_URL= # redis://redis:6379
 NODE_ENV= # Development / Production, should be the same in docker-compose.yml
 JWT_SECRET= # Secret key of JWT
@@ -86,9 +86,7 @@ All endpoints are versioned under `/api/v1/`.
   **Body:**
   ```json
   {
-    "key": "{key}",
-    "name": "{key_name}",
-    "userId": "{user_id}"
+    "name": "{key_name}"
   }
   ```
 - `PUT    /api/v1/apikey/{id}` — Update API Key  
@@ -110,12 +108,13 @@ All endpoints are versioned under `/api/v1/`.
 ```
 
 #### 🚦 **Rate Limit Rules**
+- `GET    /api/v1/rules/` — List all rate limit rules
 - `POST   /api/v1/rules/` — Create a rate limit rule  
   **Body:**
   ```json
   {
     "key": "{key}",
-    "type": "{user|ip|endpoint|global}",
+    "type": "{user|ip|path|global}",
     "limit": "{limit}",
     "window": "{window_seconds}"
   }
@@ -139,6 +138,20 @@ All endpoints are versioned under `/api/v1/`.
 - `PUT    /api/v1/apiconfig/{id}` — Update config
 - `DELETE /api/v1/apiconfig/{id}` — Delete config
 
+#### 🧪 **Validation**
+- `GET    /api/v1/validation/` — List all validations for the user
+- `POST   /api/v1/validation/` — Create validation  
+  **Body:**
+  ```json
+  {
+    "route": "/api/v1/user",
+    "method": "POST",
+    "schema": { /* JSON Schema */ }
+  }
+  ```
+- `PUT    /api/v1/validation/{id}` — Update validation
+- `DELETE /api/v1/validation/{id}` — Delete validation
+
 ---
 
 ### 4. **Authentication & Headers**
@@ -151,6 +164,8 @@ All endpoints are versioned under `/api/v1/`.
   `x-sentinel-limit-rules: <user|ip|path|global>`
 - **Transformations**:  
   `x-sentinel-transform: request response`
+- **Validation**:  
+  `x-sentinel-validate: true`
 
 ---
 
@@ -190,16 +205,115 @@ You can enable automatic transformation of request and response data using the `
 
 ---
 
-### 7. **CLI**
+### 6. **Validation System**
 
-A CLI (`sentinel`) is under development:
+SentinelAPI supports **request validation** using JSON Schema.
 
-# After building the entire project:
+#### **How Validation Works**
+
+- **Create a Validation Rule:**  
+  Use `POST /api/v1/validation/` to define a validation for a specific route and HTTP method.  
+  Example:
+  ```json
+  {
+    "route": "/api/v1/user",
+    "method": "POST",
+    "schema": {
+      "type": "object",
+      "required": ["email", "password"],
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "password": { "type": "string", "minLength": 8 }
+      }
+    }
+  }
+  ```
+- **Enable Validation on Requests:**  
+  Add the header:  
+  `x-sentinel-validate: true`  
+  to any request you want to validate.  
+  The middleware will:
+  1. Look up the validation rule for the current user, route, and HTTP method.
+  2. Validate the request body against the stored JSON Schema.
+  3. Reject the request with an error if validation fails.
+
+- **Validation Storage:**  
+  Validation rules are stored in the database and cached in Redis for fast lookup.
+
+- **Validation Endpoints:**
+  - `GET    /api/v1/validation/` — List all validations for the user.
+  - `POST   /api/v1/validation/` — Create a new validation rule.
+  - `PUT    /api/v1/validation/{id}` — Update a validation rule.
+  - `DELETE /api/v1/validation/{id}` — Delete a validation rule.
+
+#### **Dynamic Validation Example**
+
+To require all POST requests to `/api/v1/user` to have an email and password:
+
+1. Create the validation rule:
+   ```json
+   {
+     "route": "/api/v1/user",
+     "method": "POST",
+     "schema": {
+       "type": "object",
+       "required": ["email", "password"],
+       "properties": {
+         "email": { "type": "string", "format": "email" },
+         "password": { "type": "string", "minLength": 8 }
+       }
+     }
+   }
+   ```
+2. Send a POST request with header:
+   ```
+   x-sentinel-validate: true
+   ```
+   If the body does not match the schema, the request will be rejected.
+
+---
+
+### 7. **CLI Documentation**
+
+SentinelAPI provides a CLI (`sentinel`) for managing users, API keys, Redis, and rate limit rules.
+
+#### **Installation**
+
+After building the project, link the CLI globally:
+
 ```sh
 npm link
-
-sentinel test
 ```
+
+You can now use the `sentinel` command:
+
+```sh
+sentinel --help
+```
+
+#### **Available CLI Commands**
+
+- **User Commands**
+  - Create a new user:
+    ```sh
+    sentinel create-user --name <name> --email <email> --password <password>
+    ```
+  - Login (Get JWT Token):
+    ```sh
+    sentinel login --email <email> --password <password>
+    ```
+
+- **Redis Commands**
+  - Check Redis Health and List Keys:
+    ```sh
+    sentinel redis
+    ```
+
+- **Rate Limit Commands**
+  - Check Rate Limit Rules:
+    ```sh
+    sentinel rate-limit
+    ```
 
 ---
 
@@ -208,11 +322,11 @@ sentinel test
 Follow this sequence to set up and use the API securely and efficiently:
 
 1. **Create User**  
-   `POST /api/v1/users`  
+   `POST /api/v1/user`  
    _Registers a new user in the database._
 
 2. **Login**  
-   `POST /api/v1/users/login`  
+   `POST /api/v1/user/login`  
    _Authenticates the user and returns a JWT token._  
    > After login, use the header:  
    > `Authorization: Bearer <token>`
@@ -240,6 +354,12 @@ Follow this sequence to set up and use the API securely and efficiently:
    > After this, you can use the header:  
    > `x-sentinel-transform: request`, `x-sentinel-transform: response`, or both.
 
+7. **Create Validation Rule (Optional)**  
+   `POST /api/v1/validation`  
+   _Defines validation rules for a route and method._  
+   > To enable validation on a request, add:  
+   > `x-sentinel-validate: true`
+
 ---
 
 **Summary of Header Usage:**
@@ -251,5 +371,7 @@ Follow this sequence to set up and use the API securely and efficiently:
   `x-sentinel-api-key: <API_KEY>`
 - **Request/Response Transformation:**  
   `x-sentinel-transform: request`, `x-sentinel-transform: response`
+- **Validation:**  
+  `x-sentinel-validate: true`
 
 ---
