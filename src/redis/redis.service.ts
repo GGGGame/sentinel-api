@@ -28,6 +28,14 @@ class RedisService {
         return this.client;
     }
 
+    async keys(pattern: string): Promise<string[]> {
+        try {
+            return await this.client.keys(pattern);
+        } catch (error) {
+            throw new RedisError(500, `Error fetching keys with pattern ${pattern} - ${error.message}`)
+        }
+    }
+
     async set(key: string, value: string, expiry?: number): Promise<void> {
         try {
             await this.client.set(key, value);
@@ -57,6 +65,20 @@ class RedisService {
             return count;
         } catch (error) {
             throw new RedisError(500, `Error incrementing Redis key ${key} - ${error.message}`)
+        }
+    }
+
+    async del(key: string): Promise<void> {
+        try {
+            const result = await this.client.del(key);
+            if (result === 0) {
+                throw new RedisError(404, `Key ${key} not found in Redis`);
+            }
+        } catch (error) {
+            if (error instanceof RedisError) {
+                throw error; // Re-throw custom RedisError
+            }
+            throw new RedisError(500, `Error deleting Redis key ${key} - ${error.message}`);
         }
     }
 

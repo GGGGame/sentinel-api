@@ -4,10 +4,12 @@ import { userController } from '../controllers/user.controller';
 import { validateApiKey } from '../middleware/validateApiKey';
 import { transformRequest } from '../middleware/transformRequest';
 import { transformResponse } from '../middleware/transformResponse';
+import { validateData } from '../middleware/validation';
 
 const onRequestMiddleware = [ authenticate, validateApiKey ];
 const preHandlerMiddleware = [ transformRequest ];
 const preSerialization = [ transformResponse ];
+const preValidation = [ validateData ];
 
 export const userRoutes = async (app: FastifyInstance) => {
 
@@ -23,7 +25,8 @@ export const userRoutes = async (app: FastifyInstance) => {
     }, userController.createUser);
 
     app.put('/', {
-        onRequest: onRequestMiddleware
+        onRequest: onRequestMiddleware,
+        preValidation: preValidation
     }, userController.updateUser);
 
     app.delete('/', {

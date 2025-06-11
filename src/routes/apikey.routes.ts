@@ -3,8 +3,10 @@ import { authenticate } from '../auth/authentication';
 import { apiKeyController } from '../controllers/apikey.controller';
 import { rateLimiter } from '../middleware/rateLimiter';
 import { validateApiKey } from '../middleware/validateApiKey';
+import { validateData } from '../middleware/validation';
 
 const onRequestMiddleware = [ validateApiKey ];
+const preValidation = [ validateData ];
 
 export const apiKeyRoutes = async (app: FastifyInstance) => {
     app.addHook("onRequest", authenticate);
@@ -12,10 +14,13 @@ export const apiKeyRoutes = async (app: FastifyInstance) => {
   
     app.get("/", apiKeyController.getApiKeysByUser);
 
-    app.post("/", apiKeyController.createApiKey);
+    app.post("/", {
+        preValidation: preValidation,
+    }, apiKeyController.createApiKey);
 
     app.put("/:id", {
         onRequest: onRequestMiddleware,
+        preValidation: preValidation,
     }, apiKeyController.updateApiKey);
 
     app.delete("/:id", {
