@@ -1,8 +1,8 @@
 import { eq, sql } from "drizzle-orm";
-import { apiConfig, ApiConfig, InsertApiConfig } from "../db";
+import { apiConfig, ApiConfig, InsertApiConfig, UpdateApiConfig } from "../db";
 import { databaseService } from "../db/Database.service";
 import { MainDataService } from "../validator/main.data.service";
-import { apiConfigSchema } from "../validator/models/apiConfig.validator";
+import { apiConfigSchema } from "../validator/models/apiConfig.validator.model";
 
 class ApiConfigQuery {
     private db = databaseService.db;
@@ -23,7 +23,7 @@ class ApiConfigQuery {
         return config;
     }
 
-    async createNewApiConfig(apiConfigData: InsertApiConfig): Promise<void> {
+    async createNewApiConfig(apiConfigData: ApiConfig): Promise<void> {
         const dataService = new MainDataService(apiConfigSchema);
         
         dataService.validate(apiConfigData);
@@ -39,7 +39,7 @@ class ApiConfigQuery {
             })
     }
 
-    async updateApiConfig(id: number, apiConfigData: InsertApiConfig): Promise<void> {
+    async updateApiConfig(id: number, apiConfigData: UpdateApiConfig): Promise<void> {
         const dataService = new MainDataService(apiConfigSchema);
         
         dataService.validate(apiConfigData);

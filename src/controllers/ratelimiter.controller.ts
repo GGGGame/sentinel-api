@@ -21,7 +21,7 @@ class RateLimiterController {
         try {
             const data = req.body;
             rateLimitRulesService.createLimitRule(data);
-            await res.code(200).send({
+            await res.code(201).send({
                 status: 'Success',
                 data: 'Rate Limit Rule created successfully'
             });

@@ -3,6 +3,7 @@ import { apiKeys } from "./schema/apiKeys.schema";
 import { logs } from "./schema/logs.schema";
 import { rateLimitRules } from "./schema/rateLimitRules.schema";
 import { apiConfig } from "./schema/apiConfig.schema";
+import { validation } from "./schema/validations.schema";
 import { TransformRequest, TransformResponse } from "../Interfaces/TransformerType";
 
 export {
@@ -10,7 +11,8 @@ export {
     apiKeys,
     logs,
     rateLimitRules,
-    apiConfig
+    apiConfig,
+    validation
 }
 
 export type User = typeof users.$inferSelect;
@@ -34,4 +36,12 @@ export type ApiConfig = Omit<typeof apiConfig.$inferSelect, 'transformRequest' |
     transformRequest?: TransformRequest,
     transformResponse?: TransformResponse
 }
-export type InsertApiConfig = Omit<typeof apiConfig.$inferSelect, "id" | "createdAt" | "updatedAt">;
+
+export type InsertApiConfig = Omit<typeof apiConfig.$inferSelect, "id" | "userId" | "createdAt" | "updatedAt">;
+export type UpdateApiConfig = Omit<typeof apiConfig.$inferSelect, "id" | "createdAt" | "updatedAt">;
+
+export type Validation = typeof validation.$inferSelect;
+export type InsertValidation = Omit<typeof validation.$inferInsert, "userId">;
+export type UpdateValidation = typeof validation.$inferInsert & {
+    isActive?: boolean;
+};

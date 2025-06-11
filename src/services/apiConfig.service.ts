@@ -1,4 +1,4 @@
-import { ApiConfig, InsertApiConfig } from "../db";
+import { ApiConfig, InsertApiConfig, UpdateApiConfig } from "../db";
 import { apiConfigQuery } from "../query/ApiConfig.query";
 import { ApiError } from "../utils/Error/ApiError";
 
@@ -14,19 +14,21 @@ class apiConfigServices {
     }
 
     async createApiConfig(user_id: number, apiConfigData: InsertApiConfig): Promise<void> {
-        apiConfigData.userId = user_id;
+        const apiConfig = apiConfigData as ApiConfig;
 
-        await apiConfigQuery.createNewApiConfig(apiConfigData);
+        apiConfig.userId = user_id;
+
+        await apiConfigQuery.createNewApiConfig(apiConfig);
     }
 
-    async updateApiConfig(id: number, apiConfigData: InsertApiConfig): Promise<void> {
-        this.checkApiConfingById(id);
+    async updateApiConfig(id: number, apiConfigData: UpdateApiConfig): Promise<void> {
+        await this.checkApiConfingById(id);
 
         await apiConfigQuery.updateApiConfig(id, apiConfigData);
     }
 
     async deleteApiConfig(id: number): Promise<void> {
-        this.checkApiConfingById(id);
+        await this.checkApiConfingById(id);
 
         await apiConfigQuery.deleteApiConfig(id);
     }

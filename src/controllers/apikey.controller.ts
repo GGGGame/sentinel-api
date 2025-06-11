@@ -22,7 +22,7 @@ class ApiKeyController {
             const data: InsertApiKeySelf = req.body;
             await apiKeyService.createApiKey(req.user?.id, data);
 
-            await res.code(200).send({
+            await res.code(201).send({
                 status: 'Success',
                 data: 'ApiKey created successfully'
             });

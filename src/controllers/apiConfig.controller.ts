@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { ApiError } from "../utils/Error/ApiError";
 import { apiConfigService } from "../services/apiConfig.service";
-import { InsertApiConfig } from "../db";
+import { InsertApiConfig, UpdateApiConfig } from "../db";
 
 class ApiConfigController {
 
@@ -21,7 +21,7 @@ class ApiConfigController {
         try {
             const data = req.body;
             await apiConfigService.createApiConfig(req.user.id, data);
-            await res.code(200).send({
+            await res.code(201).send({
                 status: 'Success',
                 data: 'ApiConfig created successfully'
             });
@@ -30,7 +30,7 @@ class ApiConfigController {
         }
     }
 
-    async updateApiConfig(req: FastifyRequest<{ Params: { id: string }, Body: InsertApiConfig }>, res: FastifyReply): Promise<void> {
+    async updateApiConfig(req: FastifyRequest<{ Params: { id: string }, Body: UpdateApiConfig }>, res: FastifyReply): Promise<void> {
         try {
             const { id } = req.params;
             const data = req.body;

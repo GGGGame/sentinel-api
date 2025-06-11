@@ -11,9 +11,7 @@ services:
     depends_on:
       - postgres
       - redis
-    # volumes:
-    #   - .:/app
-    command: pm2-runtime scripts/ecosystem.config.js
+    command: npm run start
 
   postgres:
     image: postgres:latest
@@ -27,7 +25,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./drizzle/init.sql:/docker-entrypoint-initdb.d/init.sql 
 
   redis:
     image: redis:latest

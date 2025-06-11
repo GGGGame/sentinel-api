@@ -1,7 +1,7 @@
 import { InsertRateLimitRule, RateLimitRule, rateLimitRules } from "../db";
 import { databaseService } from "../db/Database.service";
 import { MainDataService } from "../validator/main.data.service";
-import { rateLimitSchema } from "../validator/models/rateLimit.validator";
+import { rateLimitSchema } from "../validator/models/rateLimit.validator.model";
 
 class RateLimitRulesQuery {
     private db = databaseService.db;
