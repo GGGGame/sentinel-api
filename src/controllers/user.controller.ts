@@ -46,7 +46,7 @@ class UserControllers {
         try {
             const data = req.body;
             await userService.createUser(data);
-            await res.code(200).send({
+            await res.code(201).send({
                 status: 'Success',
                 data: 'User created successfully'
             });

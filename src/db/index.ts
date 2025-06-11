@@ -36,7 +36,12 @@ export type ApiConfig = Omit<typeof apiConfig.$inferSelect, 'transformRequest' |
     transformRequest?: TransformRequest,
     transformResponse?: TransformResponse
 }
-export type InsertApiConfig = Omit<typeof apiConfig.$inferSelect, "id" | "createdAt" | "updatedAt">;
+
+export type InsertApiConfig = Omit<typeof apiConfig.$inferSelect, "id" | "userId" | "createdAt" | "updatedAt">;
+export type UpdateApiConfig = Omit<typeof apiConfig.$inferSelect, "id" | "createdAt" | "updatedAt">;
 
 export type Validation = typeof validation.$inferSelect;
-export type InsertValidation = typeof validation.$inferInsert
+export type InsertValidation = Omit<typeof validation.$inferInsert, "userId">;
+export type UpdateValidation = typeof validation.$inferInsert & {
+    isActive?: boolean;
+};

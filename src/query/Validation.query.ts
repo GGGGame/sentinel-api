@@ -1,7 +1,8 @@
 import { eq } from "drizzle-orm";
-import { Validation, validation } from "../db";
+import { InsertValidation, UpdateValidation, Validation, validation } from "../db";
 import { databaseService } from "../db/Database.service";
 import { MainDataService } from "../validator/main.data.service";
+import { validationSchema } from "../validator/models/Validation.validator.model";
 
 class ValidationQuery {
     private db = databaseService.db;
@@ -11,11 +12,30 @@ class ValidationQuery {
         return validate;
     }
 
-    // async createValidation(validationData: Validation): Promise<void> {
-    //     const dataService = new MainDataService(validationSchema);
+    async getValidationsByUser(userId: number): Promise<Validation[]> {
+        const validations = await this.db.select().from(validation).where(eq(validation.userId, userId));
+        return validations;
+    }
 
-    //     dataService.validate(validationData);
+    async createValidation(validationData: Validation): Promise<void> {
+        const dataService = new MainDataService(validationSchema);
 
-    //     await this.db.insert(validation).values(validationData).returning();
-    // }  
+        dataService.validate(validationData);
+
+        await this.db.insert(validation).values(validationData).returning();
+    }
+
+    async updateValidation(id: number, validationData: UpdateValidation): Promise<void> {
+        const dataService = new MainDataService(validationSchema);
+
+        dataService.validate(validationData);
+
+        await this.db.update(validation).set(validationData).where(eq(validation.id, id));
+    }
+
+    async deleteValidation(id: number): Promise<void> {
+        await this.db.delete(validation).where(eq(validation.id, id));
+    }
 }
+
+export const validationQuery = new ValidationQuery();
